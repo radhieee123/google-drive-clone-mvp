@@ -1,4 +1,3 @@
-// src/components/GetFolders.tsx
 import React, { useState, useEffect } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -42,13 +41,11 @@ function GetFolders({
   };
 
   const handleMenuToggle = (fileId: string) => {
-    // Toggle the dropdown for the given file
     setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
 
   const folders = folderList.map((folder) => {
-    // set a condition for the folders to be displayed
     let condition = !folder?.isTrashed;
     if (select === "starred")
       condition = folder?.isStarred && !folder?.isTrashed;
@@ -61,7 +58,7 @@ function GetFolders({
           onDoubleClick={() => {
             select !== "trashed" && router.push("/drive/folders/" + folder.id);
           }}
-          className="relative flex w-[13.75rem] cursor-alias items-center justify-between rounded-xl bg-darkC2 p-3 hover:bg-darkC"
+          className="relative flex w-[13.75rem] cursor-pointer items-center justify-between rounded-xl bg-darkC2 p-3 transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-darkC hover:shadow-lg"
         >
           <div className="flex items-center space-x-2">
             <AiFillFolder className="h-6 w-6" />
@@ -73,31 +70,25 @@ function GetFolders({
             onClick={() => handleMenuToggle(folder.id)}
             className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
           />
-          {
-            /* drop down */
-            openMenu === folder.id && (
-              <FileDropDown
-                file={folder}
-                setOpenMenu={setOpenMenu}
-                isFolderComp={true}
-                select={select}
-                folderId={folder.id}
-                setRenameToggle={setRenameToggle}
-              />
-            )
-          }
-          {
-            // rename toggle
-            renameToggle === folder.id && (
-              <Rename
-                setRenameToggle={setRenameToggle}
-                fileId={folder.id}
-                fileName={folder.folderName}
-                isFolder={true}
-                fileExtension=""
-              />
-            )
-          }
+          {openMenu === folder.id && (
+            <FileDropDown
+              file={folder}
+              setOpenMenu={setOpenMenu}
+              isFolderComp={true}
+              select={select}
+              folderId={folder.id}
+              setRenameToggle={setRenameToggle}
+            />
+          )}
+          {renameToggle === folder.id && (
+            <Rename
+              setRenameToggle={setRenameToggle}
+              fileId={folder.id}
+              fileName={folder.folderName}
+              isFolder={true}
+              fileExtension=""
+            />
+          )}
         </div>
       )
     );

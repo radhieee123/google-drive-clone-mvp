@@ -1,4 +1,3 @@
-// src/components/GetFiles.tsx
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
@@ -39,13 +38,11 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
   };
 
   const handleMenuToggle = (fileId: string) => {
-    // Toggle the dropdown for the given file
     setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
 
   const list = fileList.map((file) => {
-    // getting the icon for the file
     const icon =
       fileIcons[file.fileExtension as keyof typeof fileIcons] ??
       fileIcons["any"];
@@ -78,7 +75,6 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
       <div className="h-36 w-36 ">{icon}</div>
     );
 
-    // set a condition for the files to be displayed
     let condition = !file?.isTrashed;
     if (select === "starred") condition = file?.isStarred && !file?.isTrashed;
     else if (select === "trashed") condition = file?.isTrashed;
@@ -105,31 +101,25 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                 onClick={() => handleMenuToggle(file.id)}
                 className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
               />
-              {
-                /* drop down */
-                openMenu === file.id && (
-                  <FileDropDown
-                    file={file}
-                    setOpenMenu={setOpenMenu}
-                    isFolderComp={false}
-                    select={select}
-                    folderId=""
-                    setRenameToggle={setRenameToggle}
-                  />
-                )
-              }
-              {
-                // rename toggle
-                renameToggle === file.id && (
-                  <Rename
-                    setRenameToggle={setRenameToggle}
-                    fileId={file.id}
-                    isFolder={false}
-                    fileName={file.fileName}
-                    fileExtension={file.fileExtension}
-                  />
-                )
-              }
+              {openMenu === file.id && (
+                <FileDropDown
+                  file={file}
+                  setOpenMenu={setOpenMenu}
+                  isFolderComp={false}
+                  select={select}
+                  folderId=""
+                  setRenameToggle={setRenameToggle}
+                />
+              )}
+              {renameToggle === file.id && (
+                <Rename
+                  setRenameToggle={setRenameToggle}
+                  fileId={file.id}
+                  isFolder={false}
+                  fileName={file.fileName}
+                  fileExtension={file.fileExtension}
+                />
+              )}
             </div>
             <div className="flex h-44 w-48 items-center justify-center pb-2.5">
               {img}
@@ -140,7 +130,6 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     );
   });
 
-  // the list of files
   return <>{list}</>;
 }
 
