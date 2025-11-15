@@ -1,4 +1,3 @@
-// api.test.ts
 import {
   addFile,
   getFiles,
@@ -14,10 +13,8 @@ import {
   getFolderById,
 } from "./api-client";
 
-// Mock fetch globally
 global.fetch = jest.fn();
 
-// Helper to mock fetch responses
 function mockFetchResponse(data: any, ok = true) {
   (global.fetch as jest.Mock).mockResolvedValue({
     ok,
@@ -25,7 +22,6 @@ function mockFetchResponse(data: any, ok = true) {
   });
 }
 
-// Mock localStorage
 beforeEach(() => {
   jest.clearAllMocks();
 
@@ -33,7 +29,6 @@ beforeEach(() => {
     mockUser: JSON.stringify({ id: "user123" }),
   };
 
-  // @ts-ignore
   global.localStorage = {
     getItem: jest.fn((key) => store[key] ?? null),
     setItem: jest.fn((key, value) => (store[key] = value)),
@@ -112,10 +107,6 @@ test("deleteFile sends DELETE request", async () => {
   );
 });
 
-// -------------------------
-// FOLDER ACTION TESTS
-// -------------------------
-
 test("addFolder sends POST request", async () => {
   mockFetchResponse({ id: "folder123" });
 
@@ -186,10 +177,6 @@ test("deleteFolder sends DELETE request", async () => {
     }),
   );
 });
-
-// -------------------------
-// GET FOLDER BY ID
-// -------------------------
 
 test("getFolderById sends GET request", async () => {
   mockFetchResponse({ id: "folder123" });

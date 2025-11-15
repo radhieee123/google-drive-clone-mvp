@@ -1,8 +1,5 @@
 import { logStorage } from "./index";
 
-/**
- * Wrapper for localStorage that automatically logs SET_STORAGE events
- */
 export const trackedLocalStorage = {
   getItem(key: string): string | null {
     return localStorage.getItem(key);
@@ -11,21 +8,18 @@ export const trackedLocalStorage = {
   setItem(key: string, value: string): void {
     localStorage.setItem(key, value);
 
-    // Log the storage event
     logStorage(`Set localStorage key: ${key}`, "localStorage", key, value);
   },
 
   removeItem(key: string): void {
     localStorage.removeItem(key);
 
-    // Log the removal as a storage event with empty value
     logStorage(`Removed localStorage key: ${key}`, "localStorage", key, "");
   },
 
   clear(): void {
     localStorage.clear();
 
-    // Log the clear event
     logStorage("Cleared localStorage", "localStorage", "*", "");
   },
 
@@ -38,9 +32,6 @@ export const trackedLocalStorage = {
   },
 };
 
-/**
- * Wrapper for sessionStorage that automatically logs SET_STORAGE events
- */
 export const trackedSessionStorage = {
   getItem(key: string): string | null {
     return sessionStorage.getItem(key);
@@ -49,7 +40,6 @@ export const trackedSessionStorage = {
   setItem(key: string, value: string): void {
     sessionStorage.setItem(key, value);
 
-    // Log the storage event (excluding session_id to avoid recursive logging)
     if (key !== "synthetic_log_session_id") {
       logStorage(
         `Set sessionStorage key: ${key}`,
@@ -63,7 +53,6 @@ export const trackedSessionStorage = {
   removeItem(key: string): void {
     sessionStorage.removeItem(key);
 
-    // Log the removal
     if (key !== "synthetic_log_session_id") {
       logStorage(
         `Removed sessionStorage key: ${key}`,
@@ -77,7 +66,6 @@ export const trackedSessionStorage = {
   clear(): void {
     sessionStorage.clear();
 
-    // Log the clear event
     logStorage("Cleared sessionStorage", "sessionStorage", "*", "");
   },
 

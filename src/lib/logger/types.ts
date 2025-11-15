@@ -1,4 +1,3 @@
-// Action Types
 export type ActionType =
   | "CLICK"
   | "KEY_PRESS"
@@ -7,7 +6,6 @@ export type ActionType =
   | "SET_STORAGE"
   | "CUSTOM";
 
-// Payload Interfaces
 export interface ClickPayload {
   text: string;
   page_url: string;
@@ -52,7 +50,6 @@ export interface CustomPayload {
   data?: Record<string, any>;
 }
 
-// Union type for all payloads
 export type LogPayload =
   | ClickPayload
   | KeyPressPayload
@@ -61,14 +58,12 @@ export type LogPayload =
   | SetStoragePayload
   | CustomPayload;
 
-// Main Log Interface
 export interface Log {
   id: number;
-  timestamp: string; // ISO date string
+  timestamp: string;
   session_id: string;
   action_type: ActionType;
   payload: LogPayload;
 }
 
-// Helper type for creating logs without id (auto-generated)
 export type LogEventInput = Omit<Log, "id" | "timestamp" | "session_id">;

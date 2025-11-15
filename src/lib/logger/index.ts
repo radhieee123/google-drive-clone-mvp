@@ -5,15 +5,10 @@ const SESSION_ID_KEY = "synthetic_log_session_id";
 
 let logIdCounter = 0;
 
-/**
- * Get or create a unique session ID for the current browser session
- */
 function getSessionId(): string {
-  // Try to get existing session ID from sessionStorage
   let sessionId = sessionStorage.getItem(SESSION_ID_KEY);
 
   if (!sessionId) {
-    // Generate a new session ID
     sessionId = `session_${Date.now()}_${Math.random()
       .toString(36)
       .substring(2, 15)}`;
@@ -28,13 +23,6 @@ function getSessionId(): string {
   return sessionId;
 }
 
-/**
- * Main logging function - logs events to the synthetic logging endpoint
- * AL2.1: Standard Function - Single, standardized, asynchronous helper
- * AL2.2: Non-Blocking - Errors are silently handled
- * AL2.3: Session Context - Includes unique session_id
- * AL2.4: Backend Endpoint - Posts to /_synthetic/log_event
- */
 export async function logEvent(
   action_type: ActionType,
   payload: LogPayload,
@@ -48,28 +36,21 @@ export async function logEvent(
       payload,
     };
 
-    // Send to backend asynchronously
     await fetch(LOGGING_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(log),
-      // Use keepalive to ensure the request completes even if the page unloads
       keepalive: true,
     }).catch((error) => {
-      // AL2.2: Silently handle errors - log to console but don't throw
       console.warn("Synthetic logging failed:", error);
     });
   } catch (error) {
-    // AL2.2: Silently handle errors - log to console but don't throw
     console.warn("Error creating log event:", error);
   }
 }
 
-/**
- * Helper function to log CLICK events
- */
 export function logClick(
   text: string,
   elementIdentifier: string,
@@ -83,9 +64,6 @@ export function logClick(
   });
 }
 
-/**
- * Helper function to log KEY_PRESS events
- */
 export function logKeyPress(
   text: string,
   elementIdentifier: string,
@@ -99,9 +77,6 @@ export function logKeyPress(
   });
 }
 
-/**
- * Helper function to log SCROLL events
- */
 export function logScroll(
   text: string,
   scrollX: number,
@@ -115,9 +90,6 @@ export function logScroll(
   });
 }
 
-/**
- * Helper function to log GO_TO_URL events
- */
 export function logNavigation(text: string, targetUrl: string): void {
   logEvent("GO_TO_URL", {
     text,
@@ -126,9 +98,6 @@ export function logNavigation(text: string, targetUrl: string): void {
   });
 }
 
-/**
- * Helper function to log SET_STORAGE events
- */
 export function logStorage(
   text: string,
   storageType: "localStorage" | "sessionStorage",
@@ -144,9 +113,6 @@ export function logStorage(
   });
 }
 
-/**
- * Helper function to log CUSTOM events
- */
 export function logCustom(
   text: string,
   customAction: string,

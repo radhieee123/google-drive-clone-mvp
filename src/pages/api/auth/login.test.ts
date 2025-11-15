@@ -47,7 +47,7 @@ describe("POST /api/login", () => {
     req.method = "POST";
     req.body = { email: "test@example.com", password: "123" };
 
-    (db.user.findUnique as jest.Mock).mockResolvedValue(null); // no user
+    (db.user.findUnique as jest.Mock).mockResolvedValue(null);
 
     await handler(req, res);
 

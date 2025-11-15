@@ -18,7 +18,6 @@ const getHeaders = () => {
   };
 };
 
-// Helper function to log API calls
 const logApiCall = async (
   endpoint: string,
   method: string,

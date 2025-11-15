@@ -1,6 +1,5 @@
 import React from "react";
 
-// The AddFolder component displays a pop-up for creating a new folder.
 function AddFolder({
   setFolderToggle,
   setFolderName,
@@ -12,15 +11,13 @@ function AddFolder({
   };
 
   return (
-    // Background overlay for the pop-up
     <div
-      onClick={() => setFolderToggle(false)} // Close the pop-up when clicking outside
+      onClick={() => setFolderToggle(false)}
       className="absolute -left-5 -top-20 z-20 flex h-screen w-screen items-center justify-center bg-darkC2/40"
     >
-      {/* Pop-up form for creating a new folder */}
       <div
         onClick={(e) => {
-          e.stopPropagation(); // Prevent clicks inside the form from closing the pop-up
+          e.stopPropagation();
         }}
         className="w-96 space-y-6 rounded-xl bg-white p-5 shadow-lg shadow-[#bbb]"
       >

@@ -1,4 +1,3 @@
-// pages/drive/my-drive.tsx
 import Head from "next/head";
 import GetFiles from "@/components/GetFiles";
 import GetFolders from "@/components/GetFolders";

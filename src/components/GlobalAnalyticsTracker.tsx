@@ -7,11 +7,7 @@ export default function GlobalAnalyticsTracker() {
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // User switched away from the tab/window
-      } else {
-        // User returned to the tab/window
-      }
+      return null;
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);

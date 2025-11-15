@@ -2,10 +2,6 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { logScroll, logNavigation, logCustom } from "./index";
 
-/**
- * Hook to track scroll events
- * Throttles scroll events to avoid excessive logging
- */
 export function useScrollTracking(throttleMs: number = 1000) {
   const lastScrollTime = useRef(0);
 
@@ -13,7 +9,6 @@ export function useScrollTracking(throttleMs: number = 1000) {
     const handleScroll = () => {
       const now = Date.now();
 
-      // Throttle scroll events
       if (now - lastScrollTime.current < throttleMs) {
         return;
       }
@@ -31,9 +26,6 @@ export function useScrollTracking(throttleMs: number = 1000) {
   }, [throttleMs]);
 }
 
-/**
- * Hook to track page navigation/route changes
- */
 export function usePageTracking() {
   const router = useRouter();
   const previousUrl = useRef<string>("");
@@ -46,7 +38,6 @@ export function usePageTracking() {
       previousUrl.current = url;
     };
 
-    // Log initial page load
     handleRouteChange(router.asPath);
 
     router.events.on("routeChangeComplete", handleRouteChange);
@@ -57,9 +48,6 @@ export function usePageTracking() {
   }, [router]);
 }
 
-/**
- * Hook to track component mounting and unmounting
- */
 export function useComponentTracking(componentName: string) {
   useEffect(() => {
     logCustom(`${componentName} mounted`, "COMPONENT_MOUNT", {
@@ -74,9 +62,6 @@ export function useComponentTracking(componentName: string) {
   }, [componentName]);
 }
 
-/**
- * Hook to track API calls
- */
 export function useApiTracking() {
   const trackApiCall = (
     endpoint: string,
