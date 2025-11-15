@@ -1,19 +1,39 @@
-FROM --platform=linux/amd64 node:20-slim
+FROM node:18-alpine AS base
 
-RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
-
+FROM base AS deps
 WORKDIR /app
 
 COPY package*.json ./
-COPY prisma ./prisma/
+RUN npm ci
 
-RUN npm install
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
 RUN npx prisma generate
 
-COPY . .
 RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+USER nextjs
 
 EXPOSE 3000
 
-# Run migrations at startup
-CMD npx prisma db push --accept-data-loss && npx tsx prisma/seed.ts && npm start
+ENV PORT 3000
+
+CMD ["node", "server.js"]

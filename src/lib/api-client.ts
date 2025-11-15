@@ -1,7 +1,10 @@
+import { logCustom } from "./logger";
+import { trackedLocalStorage } from "./logger/storage";
+
 const API_BASE = "/api";
 
 const getUserId = (): string | null => {
-  const userStr = localStorage.getItem("mockUser");
+  const userStr = trackedLocalStorage.getItem("mockUser");
   if (!userStr) return null;
   const user = JSON.parse(userStr);
   return user.id;
@@ -15,6 +18,21 @@ const getHeaders = () => {
   };
 };
 
+// Helper function to log API calls
+const logApiCall = async (
+  endpoint: string,
+  method: string,
+  success: boolean,
+  error?: string,
+) => {
+  logCustom(`API ${method} ${endpoint}`, "API_CALL", {
+    endpoint,
+    method,
+    status: success ? "success" : "error",
+    error,
+  });
+};
+
 export const addFile = async (
   fileName: string,
   fileLink: string,
@@ -22,23 +40,31 @@ export const addFile = async (
   fileSize: number,
   folderId?: string,
 ) => {
-  const response = await fetch(`${API_BASE}/files`, {
-    method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify({
-      fileName,
-      fileLink,
-      fileExtension,
-      fileSize,
-      folderId,
-    }),
-  });
+  const endpoint = `${API_BASE}/files`;
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        fileName,
+        fileLink,
+        fileExtension,
+        fileSize,
+        folderId,
+      }),
+    });
 
-  if (!response.ok) {
-    throw new Error("Failed to add file");
+    if (!response.ok) {
+      await logApiCall(endpoint, "POST", false, `HTTP ${response.status}`);
+      throw new Error("Failed to add file");
+    }
+
+    await logApiCall(endpoint, "POST", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "POST", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const getFiles = async (
@@ -51,153 +77,252 @@ export const getFiles = async (
   if (starred) params.append("starred", "true");
   if (trashed) params.append("trashed", "true");
 
-  const response = await fetch(`${API_BASE}/files?${params.toString()}`, {
-    headers: getHeaders(),
-  });
+  const endpoint = `${API_BASE}/files?${params.toString()}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to get files");
+  try {
+    const response = await fetch(endpoint, {
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "GET", false, `HTTP ${response.status}`);
+      throw new Error("Failed to get files");
+    }
+
+    await logApiCall(endpoint, "GET", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "GET", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const renameFile = async (fileId: string, fileName: string) => {
-  const response = await fetch(`${API_BASE}/files/${fileId}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify({ fileName }),
-  });
+  const endpoint = `${API_BASE}/files/${fileId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to rename file");
+  try {
+    const response = await fetch(endpoint, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ fileName }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "PATCH", false, `HTTP ${response.status}`);
+      throw new Error("Failed to rename file");
+    }
+
+    await logApiCall(endpoint, "PATCH", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "PATCH", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const starFile = async (fileId: string, isStarred: boolean) => {
-  const response = await fetch(`${API_BASE}/files/${fileId}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify({ isStarred }),
-  });
+  const endpoint = `${API_BASE}/files/${fileId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to star file");
+  try {
+    const response = await fetch(endpoint, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ isStarred }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "PATCH", false, `HTTP ${response.status}`);
+      throw new Error("Failed to star file");
+    }
+
+    await logApiCall(endpoint, "PATCH", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "PATCH", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const trashFile = async (fileId: string, isTrashed: boolean) => {
-  const response = await fetch(`${API_BASE}/files/${fileId}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify({ isTrashed, isStarred: false }),
-  });
+  const endpoint = `${API_BASE}/files/${fileId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to trash file");
+  try {
+    const response = await fetch(endpoint, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ isTrashed, isStarred: false }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "PATCH", false, `HTTP ${response.status}`);
+      throw new Error("Failed to trash file");
+    }
+
+    await logApiCall(endpoint, "PATCH", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "PATCH", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const deleteFile = async (fileId: string) => {
-  const response = await fetch(`${API_BASE}/files/${fileId}`, {
-    method: "DELETE",
-    headers: getHeaders(),
-  });
+  const endpoint = `${API_BASE}/files/${fileId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to delete file");
+  try {
+    const response = await fetch(endpoint, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "DELETE", false, `HTTP ${response.status}`);
+      throw new Error("Failed to delete file");
+    }
+
+    await logApiCall(endpoint, "DELETE", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "DELETE", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const addFolder = async (folderName: string, parentId?: string) => {
-  const response = await fetch(`${API_BASE}/folders`, {
-    method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify({
-      folderName,
-      parentId,
-    }),
-  });
+  const endpoint = `${API_BASE}/folders`;
 
-  if (!response.ok) {
-    throw new Error("Failed to add folder");
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        folderName,
+        parentId,
+      }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "POST", false, `HTTP ${response.status}`);
+      throw new Error("Failed to add folder");
+    }
+
+    await logApiCall(endpoint, "POST", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "POST", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const renameFolder = async (folderId: string, folderName: string) => {
-  const response = await fetch(`${API_BASE}/folders/${folderId}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify({ folderName }),
-  });
+  const endpoint = `${API_BASE}/folders/${folderId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to rename folder");
+  try {
+    const response = await fetch(endpoint, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ folderName }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "PATCH", false, `HTTP ${response.status}`);
+      throw new Error("Failed to rename folder");
+    }
+
+    await logApiCall(endpoint, "PATCH", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "PATCH", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const starFolder = async (folderId: string, isStarred: boolean) => {
-  const response = await fetch(`${API_BASE}/folders/${folderId}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify({ isStarred }),
-  });
+  const endpoint = `${API_BASE}/folders/${folderId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to star folder");
+  try {
+    const response = await fetch(endpoint, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ isStarred }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "PATCH", false, `HTTP ${response.status}`);
+      throw new Error("Failed to star folder");
+    }
+
+    await logApiCall(endpoint, "PATCH", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "PATCH", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const trashFolder = async (folderId: string, isTrashed: boolean) => {
-  const response = await fetch(`${API_BASE}/folders/${folderId}`, {
-    method: "PATCH",
-    headers: getHeaders(),
-    body: JSON.stringify({ isTrashed, isStarred: false }),
-  });
+  const endpoint = `${API_BASE}/folders/${folderId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to trash folder");
+  try {
+    const response = await fetch(endpoint, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify({ isTrashed, isStarred: false }),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "PATCH", false, `HTTP ${response.status}`);
+      throw new Error("Failed to trash folder");
+    }
+
+    await logApiCall(endpoint, "PATCH", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "PATCH", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export const deleteFolder = async (folderId: string) => {
-  const response = await fetch(`${API_BASE}/folders/${folderId}`, {
-    method: "DELETE",
-    headers: getHeaders(),
-  });
+  const endpoint = `${API_BASE}/folders/${folderId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to delete folder");
+  try {
+    const response = await fetch(endpoint, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "DELETE", false, `HTTP ${response.status}`);
+      throw new Error("Failed to delete folder");
+    }
+
+    await logApiCall(endpoint, "DELETE", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "DELETE", false, String(error));
+    throw error;
   }
-
-  return response.json();
 };
 
 export async function getFolderById(folderId: string) {
-  const response = await fetch(`/api/folders/${folderId}`, {
-    method: "GET",
-    headers: getHeaders(),
-  });
+  const endpoint = `/api/folders/${folderId}`;
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch folder");
+  try {
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "GET", false, `HTTP ${response.status}`);
+      throw new Error("Failed to fetch folder");
+    }
+
+    await logApiCall(endpoint, "GET", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "GET", false, String(error));
+    throw error;
   }
-
-  return response.json();
 }

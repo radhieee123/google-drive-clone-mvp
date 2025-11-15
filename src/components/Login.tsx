@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useMockAuth } from "@/contexts/MockAuthContext";
 import Image from "next/image";
+import { logClick, logKeyPress, logCustom } from "@/lib/logger";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -15,25 +16,72 @@ function Login() {
     setError("");
     setIsLoading(true);
 
+    logClick("Submit login form", "login-form-submit");
+
     try {
       await login(email, password);
+      logCustom(`User logged in: ${email}`, "USER_LOGIN", {
+        email,
+        success: true,
+      });
     } catch (err) {
       setError("Invalid email or password");
+      logCustom(`Login failed for: ${email}`, "USER_LOGIN", {
+        email,
+        success: false,
+        error: "Invalid credentials",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const quickLogin = async (demoEmail: string, demoPassword: string) => {
+    logClick(`Quick login as: ${demoEmail}`, `quick-login-${demoEmail}`);
+
     setEmail(demoEmail);
     setPassword(demoPassword);
     setIsLoading(true);
     try {
       await login(demoEmail, demoPassword);
+      logCustom(`User logged in via quick login: ${demoEmail}`, "USER_LOGIN", {
+        email: demoEmail,
+        success: true,
+        method: "quick_login",
+      });
     } catch (err) {
       setError("Login failed");
+      logCustom(`Quick login failed for: ${demoEmail}`, "USER_LOGIN", {
+        email: demoEmail,
+        success: false,
+        method: "quick_login",
+      });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleEmailKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      logKeyPress("Enter pressed in email field", "login-email-input", "Enter");
+    }
+  };
+
+  const handlePasswordKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      logKeyPress(
+        "Enter pressed in password field",
+        "login-password-input",
+        "Enter",
+      );
     }
   };
 
@@ -68,7 +116,8 @@ function Login() {
                 className="relative block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 placeholder="Email address"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
+                onKeyPress={handleEmailKeyPress}
               />
             </div>
             <div>
@@ -83,7 +132,8 @@ function Login() {
                 className="relative block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 placeholder="Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
+                onKeyPress={handlePasswordKeyPress}
               />
             </div>
           </div>

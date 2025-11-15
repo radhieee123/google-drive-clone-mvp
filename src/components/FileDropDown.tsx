@@ -19,6 +19,7 @@ import {
   trashFolder,
 } from "@/lib/api-client";
 import { useRouter } from "next/router";
+import { logClick } from "@/lib/logger";
 
 function FileDropDown({
   file,
@@ -31,10 +32,23 @@ function FileDropDown({
   const router = useRouter();
 
   const openFile = (fileLink: string) => {
+    logClick(
+      `Open ${isFolderComp ? "folder" : "file"}: ${
+        file.fileName || file.folderName
+      }`,
+      isFolderComp ? `folder-${file.id}` : `file-${file.id}`,
+    );
     window.open(fileLink, "_blank");
   };
 
   const handleStar = async () => {
+    logClick(
+      `${file.isStarred ? "Unstar" : "Star"} ${
+        isFolderComp ? "folder" : "file"
+      }: ${file.fileName || file.folderName}`,
+      `${isFolderComp ? "folder" : "file"}-star-${file.id}`,
+    );
+
     try {
       if (isFolderComp) {
         await starFolder(file.id, !file.isStarred);
@@ -49,6 +63,13 @@ function FileDropDown({
   };
 
   const handleTrash = async () => {
+    logClick(
+      `Move to trash ${isFolderComp ? "folder" : "file"}: ${
+        file.fileName || file.folderName
+      }`,
+      `${isFolderComp ? "folder" : "file"}-trash-${file.id}`,
+    );
+
     try {
       if (isFolderComp) {
         await trashFolder(file.id, true);
@@ -63,6 +84,13 @@ function FileDropDown({
   };
 
   const handleRestore = async () => {
+    logClick(
+      `Restore ${isFolderComp ? "folder" : "file"}: ${
+        file.fileName || file.folderName
+      }`,
+      `${isFolderComp ? "folder" : "file"}-restore-${file.id}`,
+    );
+
     try {
       if (isFolderComp) {
         await trashFolder(file.id, false);
@@ -77,6 +105,13 @@ function FileDropDown({
   };
 
   const handleDelete = async () => {
+    logClick(
+      `Delete permanently ${isFolderComp ? "folder" : "file"}: ${
+        file.fileName || file.folderName
+      }`,
+      `${isFolderComp ? "folder" : "file"}-delete-${file.id}`,
+    );
+
     const confirmed = window.confirm(
       `Are you sure you want to permanently delete this ${
         isFolderComp ? "folder" : "file"
@@ -96,6 +131,23 @@ function FileDropDown({
       console.error("Error deleting:", error);
       alert("Failed to delete item");
     }
+  };
+
+  const handleRename = () => {
+    logClick(
+      `Rename ${isFolderComp ? "folder" : "file"}: ${
+        file.fileName || file.folderName
+      }`,
+      `${isFolderComp ? "folder" : "file"}-rename-${file.id}`,
+    );
+    setRenameToggle(file.id);
+  };
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    logClick(`Download file: ${file.fileName}`, `file-download-${file.id}`, {
+      x: e.clientX,
+      y: e.clientY,
+    });
   };
 
   return (
@@ -124,6 +176,7 @@ function FileDropDown({
             <a
               href={file.fileLink}
               download={file.fileName}
+              onClick={handleDownloadClick}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <TbDownload className="h-5 w-5" />
@@ -132,7 +185,7 @@ function FileDropDown({
           )}
 
           <div
-            onClick={() => setRenameToggle(file.id)}
+            onClick={handleRename}
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <MdDriveFileRenameOutline className="h-5 w-5" />

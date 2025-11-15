@@ -6,6 +6,7 @@ import { useMockAuth } from "@/contexts/MockAuthContext";
 import { getFiles } from "@/lib/api-client";
 import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";
+import { logClick } from "@/lib/logger";
 
 function GetFolders({
   folderId,
@@ -40,9 +41,23 @@ function GetFolders({
     }
   };
 
-  const handleMenuToggle = (fileId: string) => {
+  const handleMenuToggle = (
+    folderId: string,
+    folderName: string,
+    e: React.MouseEvent,
+  ) => {
+    logClick(
+      `Toggle menu for folder: ${folderName}`,
+      `folder-menu-toggle-${folderId}`,
+      { x: e.clientX, y: e.clientY },
+    );
     setRenameToggle("");
-    setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
+    setOpenMenu((prevOpenMenu) => (prevOpenMenu === folderId ? "" : folderId));
+  };
+
+  const handleFolderOpen = (folderId: string, folderName: string) => {
+    logClick(`Open folder: ${folderName}`, `folder-open-${folderId}`);
+    router.push("/drive/folders/" + folderId);
   };
 
   const folders = folderList.map((folder) => {
@@ -56,7 +71,8 @@ function GetFolders({
         <div
           key={folder.id}
           onDoubleClick={() => {
-            select !== "trashed" && router.push("/drive/folders/" + folder.id);
+            select !== "trashed" &&
+              handleFolderOpen(folder.id, folder.folderName);
           }}
           className="relative flex w-[13.75rem] cursor-pointer items-center justify-between rounded-xl bg-darkC2 p-3 transition-all duration-150 ease-in-out hover:scale-[1.02] hover:bg-darkC hover:shadow-lg"
         >
@@ -67,7 +83,7 @@ function GetFolders({
             </span>
           </div>
           <BsThreeDotsVertical
-            onClick={() => handleMenuToggle(folder.id)}
+            onClick={(e) => handleMenuToggle(folder.id, folder.folderName, e)}
             className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
           />
           {openMenu === folder.id && (

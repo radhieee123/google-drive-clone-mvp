@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { trackedLocalStorage } from "@/lib/logger/storage";
+import { logCustom } from "@/lib/logger";
 
 interface MockUser {
   id: string;
@@ -46,6 +48,12 @@ export const MockAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const userData = await response.json();
       setUser(userData.user);
       localStorage.setItem("mockUser", JSON.stringify(userData.user));
+      trackedLocalStorage.setItem("key", "value");
+
+      logCustom(`User logged in: ${email}`, "USER_LOGIN", {
+        email,
+        success: true,
+      });
     } catch (error) {
       console.error("Login error:", error);
       throw error;
