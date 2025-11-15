@@ -1,9 +1,5 @@
-// src/lib/api-client.ts
-// API client to replace Firestore operations
-
 const API_BASE = "/api";
 
-// Helper to get userId from localStorage (mock auth)
 const getUserId = (): string | null => {
   const userStr = localStorage.getItem("mockUser");
   if (!userStr) return null;
@@ -11,7 +7,6 @@ const getUserId = (): string | null => {
   return user.id;
 };
 
-// Helper to add userId header
 const getHeaders = () => {
   const userId = getUserId();
   return {
@@ -19,8 +14,6 @@ const getHeaders = () => {
     "x-user-id": userId || "",
   };
 };
-
-// FILES API
 
 export const addFile = async (
   fileName: string,
@@ -124,8 +117,6 @@ export const deleteFile = async (fileId: string) => {
   return response.json();
 };
 
-// FOLDERS API
-
 export const addFolder = async (folderName: string, parentId?: string) => {
   const response = await fetch(`${API_BASE}/folders`, {
     method: "POST",
@@ -197,3 +188,16 @@ export const deleteFolder = async (folderId: string) => {
 
   return response.json();
 };
+
+export async function getFolderById(folderId: string) {
+  const response = await fetch(`/api/folders/${folderId}`, {
+    method: "GET",
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch folder");
+  }
+
+  return response.json();
+}

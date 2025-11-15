@@ -1,4 +1,3 @@
-// pages/drive/folders/[...Folder].tsx
 import React from "react";
 import { useRouter } from "next/router";
 import GetFolders from "@/components/GetFolders";
@@ -7,9 +6,9 @@ import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useMockAuth } from "@/contexts/MockAuthContext"; // ← NEW!
-import Login from "@/components/Login"; // ← NEW!
-import { getFiles } from "@/lib/api-client"; // ← NEW!
+import { useMockAuth } from "@/contexts/MockAuthContext";
+import Login from "@/components/Login";
+import { getFiles } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 
 function Folder() {
@@ -18,12 +17,13 @@ function Folder() {
   const [isLoading, setIsLoading] = useState(true);
   const [files, setFiles] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
+  const [currentFolderName, setCurrentFolderName] = useState("Nested Folder");
 
   const router = useRouter();
   const { Folder } = router.query;
-  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth(); // ← NEW!
+  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
-  const folderId = Folder?.[1] || "";
+  const folderId = Folder?.[0] || "";
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && user && folderId) {
@@ -34,13 +34,14 @@ function Folder() {
   const loadFiles = async () => {
     try {
       setIsLoading(true);
-      console.log("Loading files for folder:", folderId); // ← ADD THIS
-
       const data = await getFiles(folderId);
-      console.log("Got data:", data); // ← ADD THIS
 
       setFiles(data.files || []);
       setFolders(data.folders || []);
+
+      if (data.currentFolder?.folderName) {
+        setCurrentFolderName(data.currentFolder.folderName);
+      }
 
       const hasFolders = (data.folders || []).length > 0;
       const hasFiles = (data.files || []).length > 0;
@@ -48,7 +49,7 @@ function Folder() {
       setIsFolder(hasFolders);
       setIsFile(hasFiles);
     } catch (error) {
-      console.error("Error loading files:", error); // This should already be there
+      console.error("Error loading files:", error);
     } finally {
       setTimeout(() => {
         setIsLoading(false);
@@ -57,7 +58,6 @@ function Folder() {
   };
 
   if (authLoading) {
-    // ← NEW!
     return (
       <div className="flex min-h-screen items-center justify-center">
         <DotLoader color="#b8c2d7" size={60} />
@@ -66,7 +66,6 @@ function Folder() {
   }
 
   if (!isAuthenticated) {
-    // ← NEW!
     return <Login />;
   }
 
@@ -78,7 +77,7 @@ function Folder() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={"Nested Folder"} />
+        <FileHeader headerName={currentFolderName} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">

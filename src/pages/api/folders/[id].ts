@@ -1,4 +1,3 @@
-// src/pages/api/folders/[id].ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/server/db";
 
@@ -15,6 +14,8 @@ export default async function handler(
   }
 
   switch (method) {
+    case "GET":
+      return handleGet(req, res, userId, id as string);
     case "PATCH":
       return handlePatch(req, res, userId, id as string);
     case "DELETE":
@@ -24,7 +25,38 @@ export default async function handler(
   }
 }
 
-// Update folder (rename, star, trash)
+async function handleGet(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string,
+  folderId: string,
+) {
+  try {
+    const folder = await db.folder.findUnique({
+      where: { id: folderId },
+      select: {
+        id: true,
+        folderName: true,
+        parentId: true,
+        isStarred: true,
+        isTrashed: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+      },
+    });
+
+    if (!folder || folder.userId !== userId) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    return res.status(200).json(folder);
+  } catch (error) {
+    console.error("Get folder error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 async function handlePatch(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -34,7 +66,6 @@ async function handlePatch(
   try {
     const updates = req.body;
 
-    // Verify ownership
     const folder = await db.folder.findUnique({
       where: { id: folderId },
     });
@@ -55,7 +86,6 @@ async function handlePatch(
   }
 }
 
-// Delete folder and all contents
 async function handleDelete(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -63,7 +93,6 @@ async function handleDelete(
   folderId: string,
 ) {
   try {
-    // Verify ownership
     const folder = await db.folder.findUnique({
       where: { id: folderId },
     });
@@ -72,7 +101,6 @@ async function handleDelete(
       return res.status(404).json({ message: "Folder not found" });
     }
 
-    // Delete folder (cascade will handle files and subfolders)
     await db.folder.delete({
       where: { id: folderId },
     });

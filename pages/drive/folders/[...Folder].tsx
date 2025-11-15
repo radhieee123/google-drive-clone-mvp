@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useMockAuth } from "@/contexts/MockAuthContext";
 import Login from "@/components/Login";
-import { getFiles } from "@/lib/api-client";
+import { getFiles, getFolderById } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 
 function Folder() {
@@ -17,12 +17,13 @@ function Folder() {
   const [isLoading, setIsLoading] = useState(true);
   const [files, setFiles] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
+  const [currentFolderName, setCurrentFolderName] = useState("Nested Folder");
 
   const router = useRouter();
   const { Folder } = router.query;
   const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
-  const folderId = Folder?.[1] || "";
+  const folderId = Folder?.[0] || "";
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && user && folderId) {
@@ -34,9 +35,14 @@ function Folder() {
     try {
       setIsLoading(true);
       const data = await getFiles(folderId);
+      const folderData = await getFolderById(folderId);
 
       setFiles(data.files || []);
       setFolders(data.folders || []);
+
+      if (folderData?.folderName) {
+        setCurrentFolderName(folderData.folderName);
+      }
 
       const hasFolders = (data.folders || []).length > 0;
       const hasFiles = (data.files || []).length > 0;
@@ -72,7 +78,7 @@ function Folder() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={"Nested Folder"} />
+        <FileHeader headerName={currentFolderName} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">

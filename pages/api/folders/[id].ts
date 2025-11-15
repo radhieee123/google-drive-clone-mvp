@@ -14,12 +14,46 @@ export default async function handler(
   }
 
   switch (method) {
+    case "GET":
+      return handleGet(req, res, userId, id as string);
     case "PATCH":
       return handlePatch(req, res, userId, id as string);
     case "DELETE":
       return handleDelete(req, res, userId, id as string);
     default:
       return res.status(405).json({ message: "Method not allowed" });
+  }
+}
+
+async function handleGet(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string,
+  folderId: string,
+) {
+  try {
+    const folder = await db.folder.findUnique({
+      where: { id: folderId },
+      select: {
+        id: true,
+        folderName: true,
+        parentId: true,
+        isStarred: true,
+        isTrashed: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+      },
+    });
+
+    if (!folder || folder.userId !== userId) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    return res.status(200).json(folder);
+  } catch (error) {
+    console.error("Get folder error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
 
