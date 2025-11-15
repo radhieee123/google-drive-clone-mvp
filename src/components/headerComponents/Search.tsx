@@ -1,53 +1,82 @@
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
-import { useSession } from "next-auth/react";
+// src/components/headerComponents/Search.tsx
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
 import fileIcons from "../fileIcons";
 import { useRouter } from "next/router";
+import { getFiles } from "@/lib/api-client";
 
 function Search() {
-  const [searchTest, setSearchTest] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
   const [onFocus, setOnFocus] = useState<boolean>(false);
+  const [allFiles, setAllFiles] = useState<any[]>([]);
+  const [allFolders, setAllFolders] = useState<any[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: session } = useSession();
-  let list = fetchAllFiles(session?.user.email!);
-
+  const { user } = useMockAuth();
   const router = useRouter();
+
+  // Load all files and folders for search
+  useEffect(() => {
+    if (user) {
+      loadAllItems();
+    }
+  }, [user]);
+
+  const loadAllItems = async () => {
+    try {
+      // Get all files and folders (not trashed)
+      const data = await getFiles();
+      setAllFiles(data.files || []);
+      setAllFolders(data.folders || []);
+    } catch (error) {
+      console.error("Error loading files for search:", error);
+    }
+  };
 
   const openFile = (fileLink: string) => {
     // Function to open a file in a new tab.
     window.open(fileLink, "_blank");
   };
 
-  const searchList = list.filter((item) => {
-    // Filter files and folders based on the search text.
-    return (
-      (item.fileName?.toLowerCase().includes(searchTest.toLowerCase()) &&
-        searchTest &&
-        !item?.isTrashed) ||
-      (item.folderName?.toLowerCase().includes(searchTest.toLowerCase()) &&
-        searchTest &&
-        !item?.isTrashed)
-    );
-  });
+  // Filter files and folders based on search text
+  const searchResults = [
+    ...allFiles.filter(
+      (item) =>
+        item.fileName?.toLowerCase().includes(searchText.toLowerCase()) &&
+        searchText &&
+        !item.isTrashed,
+    ),
+    ...allFolders.filter(
+      (item) =>
+        item.folderName?.toLowerCase().includes(searchText.toLowerCase()) &&
+        searchText &&
+        !item.isTrashed,
+    ),
+  ];
 
-  const result = searchList.map((item) => {
+  const result = searchResults.map((item) => {
     // Create a list of search results.
-    const icon =
-      fileIcons[item.fileExtension as keyof typeof fileIcons] ??
-      fileIcons["any"];
+    const isFolder = item.folderName !== undefined;
+    const icon = isFolder
+      ? null
+      : fileIcons[item.fileExtension as keyof typeof fileIcons] ??
+        fileIcons["any"];
+
     return (
       <div
+        key={item.id}
         onClick={() => {
-          item.isFolder
+          isFolder
             ? router.push("/drive/folders/" + item.id)
             : openFile(item.fileLink);
+          setOnFocus(false);
+          setSearchText("");
         }}
         className="flex w-full cursor-pointer items-center space-x-3.5 border-blue-700 px-4 py-2 hover:border-l-2 hover:bg-darkC2"
       >
         <span className="h-6 w-6">
-          {item.isFolder ? (
+          {isFolder ? (
             <AiFillFolder className="h-full w-full text-textC" />
           ) : (
             icon
@@ -87,7 +116,8 @@ function Search() {
 
       <input
         ref={inputRef}
-        onChange={(e) => setSearchTest(e.target.value)}
+        onChange={(e) => setSearchText(e.target.value)}
+        value={searchText}
         type="text"
         placeholder="Search in Drive"
         className="w-full rounded-full bg-darkC2 px-2 py-[11px] indent-11 shadow-darkC
@@ -99,7 +129,7 @@ function Search() {
           className="absolute z-10 max-h-60 w-full overflow-scroll rounded-b-2xl border-t-[1.5px]
       border-textC bg-white pt-2 shadow-md shadow-darkC"
         >
-          {result.length < 1 && searchTest ? (
+          {result.length < 1 && searchText ? (
             <div className="pl-5 text-sm text-gray-500">
               No result match your search.
             </div>

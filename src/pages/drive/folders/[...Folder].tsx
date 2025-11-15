@@ -1,3 +1,4 @@
+// pages/drive/folders/[...Folder].tsx
 import React from "react";
 import { useRouter } from "next/router";
 import GetFolders from "@/components/GetFolders";
@@ -6,78 +7,105 @@ import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
-import { fetchFiles } from "@/hooks/fetchFiles";
+import { useMockAuth } from "@/contexts/MockAuthContext"; // ← NEW!
+import Login from "@/components/Login"; // ← NEW!
+import { getFiles } from "@/lib/api-client"; // ← NEW!
 import { DotLoader } from "react-spinners";
 
 function Folder() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [files, setFiles] = useState<any[]>([]);
+  const [folders, setFolders] = useState<any[]>([]);
 
   const router = useRouter();
   const { Folder } = router.query;
+  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth(); // ← NEW!
 
-  const { data: session } = useSession();
-
-  // Fetch the list of files and folders
-  const list = fetchFiles(Folder?.[1] || "", session?.user.email!);
+  const folderId = Folder?.[1] || "";
 
   useEffect(() => {
-    // Determine if there are folders and files in the list
-    const hasFolders = list.some((item) => item.isFolder);
-    const hasFiles = list.some((item) => !item.isFolder);
+    if (!authLoading && isAuthenticated && user && folderId) {
+      loadFiles();
+    }
+  }, [isAuthenticated, user, authLoading, folderId]);
 
-    // Update the state based on the results
-    setIsFolder(hasFolders);
-    setIsFile(hasFiles);
+  const loadFiles = async () => {
+    try {
+      setIsLoading(true);
+      console.log("Loading files for folder:", folderId); // ← ADD THIS
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2200);
-  }, [list]);
+      const data = await getFiles(folderId);
+      console.log("Got data:", data); // ← ADD THIS
+
+      setFiles(data.files || []);
+      setFolders(data.folders || []);
+
+      const hasFolders = (data.folders || []).length > 0;
+      const hasFiles = (data.files || []).length > 0;
+
+      setIsFolder(hasFolders);
+      setIsFile(hasFiles);
+    } catch (error) {
+      console.error("Error loading files:", error); // This should already be there
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  };
+
+  if (authLoading) {
+    // ← NEW!
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <DotLoader color="#b8c2d7" size={60} />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    // ← NEW!
+    return <Login />;
+  }
 
   return (
     <>
       <Head>
-        <title>My Drive - Google Drive</title>
+        <title>Folder - Google Drive</title>
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
         <FileHeader headerName={"Nested Folder"} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
-          {/* If the list is loading, display the loading state */}
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">
               <DotLoader color="#b8c2d7" size={60} />
             </div>
           ) : (
             <>
-              {/* If there are files or folders, display them */}
               {isFile || isFolder ? (
                 <>
                   {isFolder && (
-                    // If there are folders, display them
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Folders</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFolders folderId={Folder?.[1] || ""} select={""} />
+                        <GetFolders folderId={folderId} select={""} />
                       </div>
                     </div>
                   )}
                   {isFile && (
-                    // If there are files, display them
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Files</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFiles folderId={Folder?.[1] || ""} select={""} />
+                        <GetFiles folderId={folderId} select={""} />
                       </div>
                     </div>
                   )}
                 </>
               ) : (
-                // If there are no files or folders, display the empty state
                 <div className="flex h-full flex-col items-center justify-center">
                   <Image
                     draggable={false}

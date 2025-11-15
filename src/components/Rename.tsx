@@ -1,4 +1,5 @@
-import { renameFile } from "@/API/Firestore";
+// src/components/Rename.tsx
+import { renameFile, renameFolder } from "@/lib/api-client";
 import React, { useState } from "react";
 
 // The Rename component displays a pop-up for rename input.
@@ -10,19 +11,32 @@ function Rename({
   fileExtension,
 }: renameProps) {
   const [newName, setNewName] = useState(fileName);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const rename = () => {
+  const rename = async () => {
     // Check if the file name is empty
     if (newName === "") return;
 
-    if (isFolder) renameFile(fileId, newName, isFolder);
-    else {
-      const formatName = newName.includes(".")
-        ? newName
-        : newName + "." + fileExtension;
-      renameFile(fileId, formatName, isFolder);
+    setIsLoading(true);
+
+    try {
+      if (isFolder) {
+        await renameFolder(fileId, newName);
+      } else {
+        const formatName = newName.includes(".")
+          ? newName
+          : newName + "." + fileExtension;
+        await renameFile(fileId, formatName);
+      }
+
+      setRenameToggle("");
+      window.location.reload(); // Reload to see changes
+    } catch (error) {
+      console.error("Error renaming:", error);
+      alert("Failed to rename");
+    } finally {
+      setIsLoading(false);
     }
-    setRenameToggle("");
   };
 
   return (
@@ -34,20 +48,25 @@ function Rename({
         placeholder="Rename"
         value={newName}
         onChange={(e) => setNewName(e.target.value)}
+        disabled={isLoading}
       />
       <div className=" flex w-full justify-between  font-medium text-textC2">
         <button
           type="button"
           onClick={() => setRenameToggle("")}
           className="rounded-full px-3 py-2 hover:bg-darkC2"
+          disabled={isLoading}
         >
           Cancel
         </button>
         <button
           onClick={() => rename()}
-          className={`rounded-full px-3 py-2 ${newName && "hover:bg-darkC2"}`}
+          className={`rounded-full px-3 py-2 ${
+            newName && !isLoading && "hover:bg-darkC2"
+          }`}
+          disabled={isLoading || !newName}
         >
-          Rename
+          {isLoading ? "Renaming..." : "Rename"}
         </button>
       </div>
     </div>

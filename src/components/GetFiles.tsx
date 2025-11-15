@@ -1,21 +1,38 @@
-import React, { useState } from "react";
-import { fetchFiles } from "@/hooks/fetchFiles";
+// src/components/GetFiles.tsx
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useSession } from "next-auth/react";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import FileDropDown from "./FileDropDown";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { getFiles } from "@/lib/api-client";
 import Rename from "./Rename";
 
 function GetFiles({ folderId, select }: { folderId: string; select: string }) {
   const [openMenu, setOpenMenu] = useState("");
   const [renameToggle, setRenameToggle] = useState("");
+  const [fileList, setFileList] = useState<any[]>([]);
 
-  const { data: session } = useSession();
+  const { user } = useMockAuth();
 
-  let fileList = fetchFiles(folderId, session?.user.email!);
-  if (select) fileList = fetchAllFiles(session?.user.email!);
+  useEffect(() => {
+    if (user) {
+      loadFiles();
+    }
+  }, [folderId, select, user]);
+
+  const loadFiles = async () => {
+    try {
+      const starred = select === "starred";
+      const trashed = select === "trashed";
+
+      const data = await getFiles(folderId || undefined, starred, trashed);
+      setFileList(data.files || []);
+    } catch (error) {
+      console.error("Error loading files:", error);
+      setFileList([]);
+    }
+  };
 
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
@@ -62,11 +79,9 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     );
 
     // set a condition for the files to be displayed
-    let condition = !file?.isFolder && !file?.isTrashed;
-    if (select === "starred")
-      condition = !file?.isFolder && file?.isStarred && !file?.isTrashed;
-    else if (select === "trashed")
-      condition = !file?.isFolder && file?.isTrashed;
+    let condition = !file?.isTrashed;
+    if (select === "starred") condition = file?.isStarred && !file?.isTrashed;
+    else if (select === "trashed") condition = file?.isTrashed;
 
     return (
       condition && (
@@ -109,7 +124,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                   <Rename
                     setRenameToggle={setRenameToggle}
                     fileId={file.id}
-                    isFolder={file.isFolder}
+                    isFolder={false}
                     fileName={file.fileName}
                     fileExtension={file.fileExtension}
                   />
@@ -126,7 +141,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
   });
 
   // the list of files
-  return list;
+  return <>{list}</>;
 }
 
 export default GetFiles;

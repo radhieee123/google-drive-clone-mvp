@@ -1,6 +1,8 @@
-import Head from "next/head";
-import GetFiles from "@/components/GetFiles";
+import React from "react";
+import { useRouter } from "next/router";
 import GetFolders from "@/components/GetFolders";
+import GetFiles from "@/components/GetFiles";
+import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -9,23 +11,32 @@ import Login from "@/components/Login";
 import { getFiles } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 
-export default function Starred() {
+function Folder() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [files, setFiles] = useState<any[]>([]);
+  const [folders, setFolders] = useState<any[]>([]);
 
+  const router = useRouter();
+  const { Folder } = router.query;
   const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && user) {
-      loadStarredFiles();
-    }
-  }, [isAuthenticated, user, authLoading]);
+  const folderId = Folder?.[1] || "";
 
-  const loadStarredFiles = async () => {
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user && folderId) {
+      loadFiles();
+    }
+  }, [isAuthenticated, user, authLoading, folderId]);
+
+  const loadFiles = async () => {
     try {
       setIsLoading(true);
-      const data = await getFiles(undefined, true);
+      const data = await getFiles(folderId);
+
+      setFiles(data.files || []);
+      setFolders(data.folders || []);
 
       const hasFolders = (data.folders || []).length > 0;
       const hasFiles = (data.files || []).length > 0;
@@ -33,7 +44,7 @@ export default function Starred() {
       setIsFolder(hasFolders);
       setIsFile(hasFiles);
     } catch (error) {
-      console.error("Error loading starred files:", error);
+      console.error("Error loading files:", error);
     } finally {
       setTimeout(() => {
         setIsLoading(false);
@@ -56,12 +67,12 @@ export default function Starred() {
   return (
     <>
       <Head>
-        <title>Starred - Google Drive</title>
+        <title>Folder - Google Drive</title>
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={"Starred"} />
+        <FileHeader headerName={"Nested Folder"} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">
@@ -75,7 +86,7 @@ export default function Starred() {
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Folders</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFolders folderId="" select="starred" />
+                        <GetFolders folderId={folderId} select={""} />
                       </div>
                     </div>
                   )}
@@ -83,23 +94,20 @@ export default function Starred() {
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Files</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFiles folderId="" select="starred" />
+                        <GetFiles folderId={folderId} select={""} />
                       </div>
                     </div>
                   )}
                 </>
               ) : (
                 <div className="flex h-full flex-col items-center justify-center">
-                  <h2 className="mb-5 text-xl font-medium text-textC">
-                    No starred items yet
-                  </h2>
                   <Image
                     draggable={false}
-                    src="/empty_state_drive.png"
+                    src="/empty_state_folder.png"
                     width={500}
                     height={500}
                     alt="empty-state"
-                    className="w-full max-w-2xl object-cover object-center opacity-50"
+                    className="w-full max-w-md object-cover object-center opacity-75"
                   />
                 </div>
               )}
@@ -110,3 +118,5 @@ export default function Starred() {
     </>
   );
 }
+
+export default Folder;

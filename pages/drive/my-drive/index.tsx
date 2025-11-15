@@ -9,31 +9,38 @@ import Login from "@/components/Login";
 import { getFiles } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 
-export default function Starred() {
+export default function Home() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [files, setFiles] = useState<any[]>([]);
+  const [folders, setFolders] = useState<any[]>([]);
 
   const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {
-      loadStarredFiles();
+      loadFiles();
     }
   }, [isAuthenticated, user, authLoading]);
 
-  const loadStarredFiles = async () => {
+  const loadFiles = async () => {
     try {
       setIsLoading(true);
-      const data = await getFiles(undefined, true);
+      const data = await getFiles();
 
-      const hasFolders = (data.folders || []).length > 0;
-      const hasFiles = (data.files || []).length > 0;
+      setFiles(data.files || []);
+      setFolders(data.folders || []);
+
+      const hasFolders = (data.folders || []).some(
+        (item: any) => !item.isTrashed,
+      );
+      const hasFiles = (data.files || []).some((item: any) => !item.isTrashed);
 
       setIsFolder(hasFolders);
       setIsFile(hasFiles);
     } catch (error) {
-      console.error("Error loading starred files:", error);
+      console.error("Error loading files:", error);
     } finally {
       setTimeout(() => {
         setIsLoading(false);
@@ -56,12 +63,12 @@ export default function Starred() {
   return (
     <>
       <Head>
-        <title>Starred - Google Drive</title>
+        <title>My Drive - Google Drive</title>
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={"Starred"} />
+        <FileHeader headerName={"My Drive"} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">
@@ -75,7 +82,7 @@ export default function Starred() {
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Folders</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFolders folderId="" select="starred" />
+                        <GetFolders folderId="" select="" />
                       </div>
                     </div>
                   )}
@@ -83,7 +90,7 @@ export default function Starred() {
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Files</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFiles folderId="" select="starred" />
+                        <GetFiles folderId="" select="" />
                       </div>
                     </div>
                   )}
@@ -91,7 +98,7 @@ export default function Starred() {
               ) : (
                 <div className="flex h-full flex-col items-center justify-center">
                   <h2 className="mb-5 text-xl font-medium text-textC">
-                    No starred items yet
+                    A place for all of your files
                   </h2>
                   <Image
                     draggable={false}
@@ -99,7 +106,7 @@ export default function Starred() {
                     width={500}
                     height={500}
                     alt="empty-state"
-                    className="w-full max-w-2xl object-cover object-center opacity-50"
+                    className="w-full max-w-2xl object-cover object-center"
                   />
                 </div>
               )}

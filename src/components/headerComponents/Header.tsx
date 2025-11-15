@@ -1,7 +1,8 @@
+// src/components/headerComponents/Header.tsx
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { signIn, useSession } from "next-auth/react";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import UserInfo from "./UserInfo";
 import Link from "next/link";
 import Search from "./Search";
@@ -9,10 +10,8 @@ import { FaUserCircle } from "react-icons/fa";
 
 function Header() {
   const [displayUserInfo, setDisplayUserInfo] = useState(false);
-  const { data: session } = useSession();
-  if (session === null) {
-    signIn();
-  }
+  const { user, isAuthenticated } = useMockAuth();
+
   return (
     <header className="relative flex h-16 w-screen items-center justify-between px-5 py-2">
       <div className="w-16 pl-1 duration-500 tablet:w-60">
@@ -31,16 +30,18 @@ function Header() {
         </Link>
       </div>
       {/* search */}
-      <Search />
+      {isAuthenticated && <Search />}
       <div
         onClick={() => {
-          session ? setDisplayUserInfo((prev) => !prev) : signIn();
+          if (isAuthenticated) {
+            setDisplayUserInfo((prev) => !prev);
+          }
         }}
         className="ml-3 h-8 w-8 cursor-pointer overflow-hidden rounded-full"
       >
-        {session ? (
+        {user && user.image ? (
           <Image
-            src={session?.user.image as string}
+            src={user.image}
             className="h-full w-full rounded-full object-center"
             height={500}
             width={500}
@@ -52,7 +53,7 @@ function Header() {
         )}
       </div>
       <div className="absolute right-5 top-16">
-        {session && displayUserInfo && (
+        {isAuthenticated && displayUserInfo && (
           <UserInfo setDisplayUserInfo={setDisplayUserInfo} />
         )}
       </div>

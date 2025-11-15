@@ -1,36 +1,65 @@
+// pages/drive/my-drive.tsx
 import Head from "next/head";
 import GetFiles from "@/components/GetFiles";
 import GetFolders from "@/components/GetFolders";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
-import { fetchFiles } from "@/hooks/fetchFiles";
+import { useMockAuth } from "@/contexts/MockAuthContext";
+import Login from "@/components/Login";
+import { getFiles } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 
 export default function Home() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [files, setFiles] = useState<any[]>([]);
+  const [folders, setFolders] = useState<any[]>([]);
 
-  const { data: session } = useSession();
-
-  // Fetch the list of files and folders
-  const list = fetchFiles("", session?.user.email!);
+  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
   useEffect(() => {
-    // Determine if there are folders and files in the list
-    const hasFolders = list.some((item) => item.isFolder && !item.isTrashed);
-    const hasFiles = list.some((item) => !item.isFolder && !item.isTrashed);
+    if (!authLoading && isAuthenticated && user) {
+      loadFiles();
+    }
+  }, [isAuthenticated, user, authLoading]);
 
-    // Update the state based on the results
-    setIsFolder(hasFolders);
-    setIsFile(hasFiles);
+  const loadFiles = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getFiles();
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2200);
-  }, [list]);
+      setFiles(data.files || []);
+      setFolders(data.folders || []);
+
+      const hasFolders = (data.folders || []).some(
+        (item: any) => !item.isTrashed,
+      );
+      const hasFiles = (data.files || []).some((item: any) => !item.isTrashed);
+
+      setIsFolder(hasFolders);
+      setIsFile(hasFiles);
+    } catch (error) {
+      console.error("Error loading files:", error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <DotLoader color="#b8c2d7" size={60} />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
 
   return (
     <>
@@ -42,18 +71,15 @@ export default function Home() {
       <div>
         <FileHeader headerName={"My Drive"} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
-          {/* If the list is loading, display the loading state */}
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">
               <DotLoader color="#b8c2d7" size={60} />
             </div>
           ) : (
             <>
-              {/* If there are files or folders, display them */}
               {isFile || isFolder ? (
                 <>
                   {isFolder && (
-                    // If there are folders, display them
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Folders</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
@@ -62,7 +88,6 @@ export default function Home() {
                     </div>
                   )}
                   {isFile && (
-                    // If there are files, display them
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Files</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
@@ -72,7 +97,6 @@ export default function Home() {
                   )}
                 </>
               ) : (
-                // If there are no files or folders, display the empty state
                 <div className="flex h-full flex-col items-center justify-center">
                   <h2 className="mb-5 text-xl font-medium text-textC">
                     A place for all of your files

@@ -4,16 +4,14 @@ import { HiOutlinePlusSm } from "react-icons/hi";
 import DropDown from "./addBtnComponents/DropDown";
 import AddFolder from "./addBtnComponents/AddFolder";
 import Navbar from "./Navbar";
-import fileUpload from "@/API/FileUpload";
+import { uploadFile } from "../lib/fileUpload";
 import ProgressIndicator from "./ProgressIndicator";
-import { addFolder } from "@/API/Firestore";
-import { useSession } from "next-auth/react";
+import { addFolder } from "@/lib/api-client";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import { useRouter } from "next/router";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
-  // TODO: change uploadStatus to progress
-  // const [uploadStatus, setUploadStatus] = useState([]);
   const [progress, setProgress] = useState([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [folderName, setFolderName] = useState<string>("");
@@ -21,38 +19,42 @@ function SideMenu() {
 
   const router = useRouter();
   const { Folder } = router.query;
+  const { user } = useMockAuth();
 
-  const { data: session } = useSession();
-  const userEmail = session?.user.email;
-
-  // Add new file
-  const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleUploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files || [];
+
     for (let i = 0; i < files.length; i++) {
       const file = files?.[i];
       if (!file) return;
+
       setFileName((prev) => [...prev, file.name]);
-      fileUpload(file, setProgress, Folder?.[1] || "", userEmail!);
+
+      try {
+        await uploadFile(file, setProgress, Folder?.[1] as string);
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert(`Failed to upload ${file.name}`);
+      }
     }
   };
-  fileName.reverse();
-  progress.reverse();
 
   // Add new folder
-  const uploadFolder = () => {
-    let payload = {
-      folderName: folderName === "" ? "Untitled folder" : folderName,
-      isFolder: true,
-      isStarred: false,
-      isTrashed: false,
-      FileList: [],
-      folderId: Folder?.[1] || "",
-      userEmail,
-    };
-
-    addFolder(payload);
-    setFolderName("");
+  const handleUploadFolder = async () => {
+    try {
+      const name = folderName === "" ? "Untitled folder" : folderName;
+      await addFolder(name, Folder?.[1] as string);
+      setFolderName("");
+      window.location.reload(); // Reload to see new folder
+    } catch (error) {
+      console.error("Error creating folder:", error);
+      alert("Failed to create folder");
+    }
   };
+
+  // Reverse arrays for display
+  const displayFileNames = [...fileName].reverse();
+  const displayProgress = [...progress].reverse();
 
   return (
     <section className="relative h-[90vh] w-16 space-y-4 duration-500 tablet:w-60">
@@ -69,14 +71,14 @@ function SideMenu() {
       {isDropDown && (
         <DropDown
           setFolderToggle={setFolderToggle}
-          uploadFile={uploadFile}
+          uploadFile={handleUploadFile}
           setIsDropDown={setIsDropDown}
         />
       )}
       {/* Progress Indicator */}
       <ProgressIndicator
-        progress={progress}
-        fileName={fileName}
+        progress={displayProgress}
+        fileName={displayFileNames}
         setFileName={setFileName}
       />
       {/* New folder */}
@@ -84,7 +86,7 @@ function SideMenu() {
         <AddFolder
           setFolderToggle={setFolderToggle}
           setFolderName={setFolderName}
-          uploadFolder={uploadFolder}
+          uploadFolder={handleUploadFolder}
         />
       )}
       {/* navbar */}

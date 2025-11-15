@@ -1,20 +1,24 @@
-import { type Config } from "tailwindcss";
-
-export default {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       colors: {
+        bgc: "#f6f9fc",
+        darkC: "#dfe5ec",
+        darkC2: "#e8ecf1",
         textC: "#444746",
-        textC2: "#4285F4",
-        bgc: "#F7F9FC",
-        darkC2: "#EDF2FC",
-        darkC: "#E1E5EA",
+        textC2: "#5e5e5e",
       },
-    },
-    screens: {
-      tablet: "840px",
+      screens: {
+        tablet: "768px",
+      },
     },
   },
   plugins: [],
-} satisfies Config;
+};
