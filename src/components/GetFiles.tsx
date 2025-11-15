@@ -87,7 +87,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
           className="hover:cursor-alias"
         >
           <div
-            className="flex w-full flex-col items-center justify-center
+            className="flex w-full cursor-pointer flex-col items-center justify-center
          overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
           >
             <div className="relative flex w-full items-center justify-between px-1 py-3">

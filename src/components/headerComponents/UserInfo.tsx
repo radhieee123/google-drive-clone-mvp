@@ -28,11 +28,9 @@ function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
       <p>{user?.email}</p>
       <div className="h-20 w-20 overflow-hidden rounded-full border">
         {user?.image ? (
-          <Image
+          <img
             src={user.image}
-            className="h-full w-full rounded-full object-cover"
-            height={80}
-            width={80}
+            className="h-full w-full object-cover"
             draggable={false}
             alt="avatar"
           />
