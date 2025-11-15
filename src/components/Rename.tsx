@@ -1,8 +1,6 @@
-// src/components/Rename.tsx
 import { renameFile, renameFolder } from "@/lib/api-client";
 import React, { useState } from "react";
 
-// The Rename component displays a pop-up for rename input.
 function Rename({
   setRenameToggle,
   fileId,
@@ -14,7 +12,6 @@ function Rename({
   const [isLoading, setIsLoading] = useState(false);
 
   const rename = async () => {
-    // Check if the file name is empty
     if (newName === "") return;
 
     setIsLoading(true);
@@ -30,7 +27,7 @@ function Rename({
       }
 
       setRenameToggle("");
-      window.location.reload(); // Reload to see changes
+      window.location.reload();
     } catch (error) {
       console.error("Error renaming:", error);
       alert("Failed to rename");

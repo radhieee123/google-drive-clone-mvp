@@ -1,5 +1,3 @@
-// src/contexts/MockAuthContext.tsx
-// "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface MockUser {
@@ -25,7 +23,6 @@ export const MockAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<MockUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for existing session on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("mockUser");
     if (storedUser) {

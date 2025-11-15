@@ -9,49 +9,48 @@ import { IoMdStar } from "react-icons/io";
 function Navbar() {
   const router = useRouter();
 
-  // Function to check if a link is active based on the current route.
   const isActive = (href: string) => router.pathname === href;
   return (
     <nav className="space-y-0.5 pr-5">
       <Link
         href={"/drive/my-drive"}
-        className={`tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC ${
+        className={`flex items-center justify-center rounded-full p-2 hover:bg-darkC tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 ${
           isActive("/drive/my-drive") ? "bg-[#C2E7FF]" : ""
         }`}
       >
         {isActive("/drive/my-drive") ? (
-          <DiGoogleDrive className="tablet:h-5 tablet:w-5 h-6 w-6 rounded-sm border-[2.3px] border-textC bg-textC text-white" />
+          <DiGoogleDrive className="h-6 w-6 rounded-sm border-[2.3px] border-textC bg-textC text-white tablet:h-5 tablet:w-5" />
         ) : (
-          <DiGoogleDrive className="tablet:h-5 tablet:w-5 h-6 w-6 rounded-sm border-[2.3px] border-textC" />
+          <DiGoogleDrive className="h-6 w-6 rounded-sm border-[2.3px] border-textC tablet:h-5 tablet:w-5" />
         )}
-        <span className="tablet:block hidden">My Drive</span>
+        <span className="hidden tablet:block">My Drive</span>
       </Link>
       <Link
         href={"/drive/starred"}
-        className={`tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC ${
+        className={`flex items-center justify-center rounded-full p-2 hover:bg-darkC tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 ${
           isActive("/drive/starred") ? "bg-[#C2E7FF]" : ""
         }`}
       >
         {isActive("/drive/starred") ? (
-          <IoMdStar className="tablet:h-5 tablet:w-5 h-6 w-6" />
+          <IoMdStar className="h-6 w-6 tablet:h-5 tablet:w-5" />
         ) : (
-          <MdStarBorder className="tablet:h-5 tablet:w-5 h-6 w-6" />
+          <MdStarBorder className="h-6 w-6 tablet:h-5 tablet:w-5" />
         )}
 
-        <span className="tablet:block hidden">Starred</span>
+        <span className="hidden tablet:block">Starred</span>
       </Link>
       <Link
         href={"/drive/trash"}
-        className={`tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC ${
+        className={`flex items-center justify-center rounded-full p-2 hover:bg-darkC tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 ${
           isActive("/drive/trash") ? "bg-[#C2E7FF]" : ""
         }`}
       >
         {isActive("/drive/trash") ? (
-          <RiDeleteBin6Fill className="tablet:h-5 tablet:w-5 h-6 w-6" />
+          <RiDeleteBin6Fill className="h-6 w-6 tablet:h-5 tablet:w-5" />
         ) : (
-          <RiDeleteBin6Line className="tablet:h-5 tablet:w-5 h-6 w-6" />
+          <RiDeleteBin6Line className="h-6 w-6 tablet:h-5 tablet:w-5" />
         )}
-        <span className="tablet:block hidden">Bin</span>
+        <span className="hidden tablet:block">Bin</span>
       </Link>
     </nav>
   );

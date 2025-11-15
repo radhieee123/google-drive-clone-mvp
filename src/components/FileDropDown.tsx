@@ -1,4 +1,3 @@
-// src/components/FileDropDown.tsx
 import React from "react";
 import { HiOutlineArrowsExpand } from "react-icons/hi";
 import {
@@ -32,7 +31,6 @@ function FileDropDown({
   const router = useRouter();
 
   const openFile = (fileLink: string) => {
-    // Open the file in a new tab
     window.open(fileLink, "_blank");
   };
 
@@ -43,7 +41,7 @@ function FileDropDown({
       } else {
         await starFile(file.id, !file.isStarred);
       }
-      window.location.reload(); // Reload to see changes
+      window.location.reload();
     } catch (error) {
       console.error("Error starring:", error);
       alert("Failed to star item");
@@ -57,7 +55,7 @@ function FileDropDown({
       } else {
         await trashFile(file.id, true);
       }
-      window.location.reload(); // Reload to see changes
+      window.location.reload();
     } catch (error) {
       console.error("Error trashing:", error);
       alert("Failed to move to trash");
@@ -71,7 +69,7 @@ function FileDropDown({
       } else {
         await trashFile(file.id, false);
       }
-      window.location.reload(); // Reload to see changes
+      window.location.reload();
     } catch (error) {
       console.error("Error restoring:", error);
       alert("Failed to restore item");
@@ -93,7 +91,7 @@ function FileDropDown({
       } else {
         await deleteFile(file.id);
       }
-      window.location.reload(); // Reload to see changes
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting:", error);
       alert("Failed to delete item");

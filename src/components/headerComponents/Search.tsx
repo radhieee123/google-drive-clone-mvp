@@ -1,4 +1,3 @@
-// src/components/headerComponents/Search.tsx
 import { useMockAuth } from "@/contexts/MockAuthContext";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
@@ -16,7 +15,6 @@ function Search() {
   const { user } = useMockAuth();
   const router = useRouter();
 
-  // Load all files and folders for search
   useEffect(() => {
     if (user) {
       loadAllItems();
@@ -25,7 +23,6 @@ function Search() {
 
   const loadAllItems = async () => {
     try {
-      // Get all files and folders (not trashed)
       const data = await getFiles();
       setAllFiles(data.files || []);
       setAllFolders(data.folders || []);
@@ -35,11 +32,9 @@ function Search() {
   };
 
   const openFile = (fileLink: string) => {
-    // Function to open a file in a new tab.
     window.open(fileLink, "_blank");
   };
 
-  // Filter files and folders based on search text
   const searchResults = [
     ...allFiles.filter(
       (item) =>
@@ -56,7 +51,6 @@ function Search() {
   ];
 
   const result = searchResults.map((item) => {
-    // Create a list of search results.
     const isFolder = item.folderName !== undefined;
     const icon = isFolder
       ? null
@@ -89,7 +83,6 @@ function Search() {
     );
   });
 
-  // Event handler for the onClick event on the document
   const handleDocumentClick = (e: { target: any }) => {
     if (
       inputRef.current &&
@@ -100,7 +93,6 @@ function Search() {
     }
   };
 
-  // Attach a click event listener to the document
   useEffect(() => {
     document.addEventListener("click", handleDocumentClick);
     return () => {

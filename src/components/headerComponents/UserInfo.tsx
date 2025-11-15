@@ -1,4 +1,3 @@
-// src/components/headerComponents/UserInfo.tsx
 import React from "react";
 import { HiOutlinePlus } from "react-icons/hi";
 import { PiSignOutBold } from "react-icons/pi";

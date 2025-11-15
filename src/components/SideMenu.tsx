@@ -39,20 +39,18 @@ function SideMenu() {
     }
   };
 
-  // Add new folder
   const handleUploadFolder = async () => {
     try {
       const name = folderName === "" ? "Untitled folder" : folderName;
       await addFolder(name, Folder?.[1] as string);
       setFolderName("");
-      window.location.reload(); // Reload to see new folder
+      window.location.reload();
     } catch (error) {
       console.error("Error creating folder:", error);
       alert("Failed to create folder");
     }
   };
 
-  // Reverse arrays for display
   const displayFileNames = [...fileName].reverse();
   const displayProgress = [...progress].reverse();
 
@@ -67,7 +65,6 @@ function SideMenu() {
         <HiOutlinePlusSm className="h-6 w-6" />
         <span className="hidden text-sm font-medium tablet:block">New</span>
       </button>
-      {/* Add new file or folder drop down */}
       {isDropDown && (
         <DropDown
           setFolderToggle={setFolderToggle}
@@ -75,13 +72,11 @@ function SideMenu() {
           setIsDropDown={setIsDropDown}
         />
       )}
-      {/* Progress Indicator */}
       <ProgressIndicator
         progress={displayProgress}
         fileName={displayFileNames}
         setFileName={setFileName}
       />
-      {/* New folder */}
       {folderToggle && (
         <AddFolder
           setFolderToggle={setFolderToggle}
@@ -89,7 +84,6 @@ function SideMenu() {
           uploadFolder={handleUploadFolder}
         />
       )}
-      {/* navbar */}
       <Navbar />
     </section>
   );

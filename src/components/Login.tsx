@@ -1,4 +1,3 @@
-// src/components/Login.tsx
 "use client";
 import React, { useState } from "react";
 import { useMockAuth } from "@/contexts/MockAuthContext";
@@ -25,7 +24,6 @@ function Login() {
     }
   };
 
-  // Quick login with demo accounts
   const quickLogin = async (demoEmail: string, demoPassword: string) => {
     setEmail(demoEmail);
     setPassword(demoPassword);

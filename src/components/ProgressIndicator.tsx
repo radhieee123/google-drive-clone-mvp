@@ -15,7 +15,6 @@ function ProgressIndicator({
 }: ProgressIndicatorProps) {
   const [minimize, setMinimize] = useState(true);
 
-  // show all file name and progress
   const fileNames = fileName?.map((name, index) => {
     const fileExtension = name.split(".").pop();
     return (
@@ -80,7 +79,6 @@ function ProgressIndicator({
                 className="h-9 w-9 cursor-pointer rounded-full p-2 hover:bg-darkC"
               />
             </div>
-            {/* uploaded files progress */}
           </div>
           <div className="flex max-h-60 flex-col overflow-y-scroll">
             {fileNames}
