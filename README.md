@@ -286,8 +286,6 @@ logEvent("CLICK", {
 - Path traversal protection on file operations
 - Input sanitization on all user-provided data
 
-## 🚧 Development Roadmap
-
 ### MVP (Current)
 
 - [x] Single-user file management
@@ -295,35 +293,3 @@ logEvent("CLICK", {
 - [x] File upload/download
 - [x] CRUD operations
 - [x] Event logging
-
-### Future Enhancements
-
-- [ ] Multi-user support with authentication
-- [ ] File sharing and permissions
-- [ ] Search functionality
-- [ ] File versioning
-- [ ] Trash/recovery system
-- [ ] Preview for common file types
-- [ ] Drag-and-drop interface
-- [ ] Bulk operations
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
-## 👥 Authors
-
-- Your Name - Initial work
-
-## 🙏 Acknowledgments
-
-- Inspired by cloud storage solutions like Google Drive and Dropbox
-- Built with modern web technologies for optimal performance
