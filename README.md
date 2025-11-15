@@ -108,58 +108,6 @@ yarn dev
 
 The application will be available at `http://localhost:3000`
 
-## 📁 Project Structure
-
-```
-drive-mvp/
-├── prisma/
-│   ├── schema.prisma          # Database schema
-│   └── migrations/            # Database migrations
-├── public/                    # Static assets
-├── src/
-│   ├── app/                   # Next.js app directory
-│   │   ├── api/              # API routes
-│   │   │   ├── folders/      # Folder endpoints
-│   │   │   ├── files/        # File endpoints
-│   │   │   ├── items/        # Item update/delete endpoints
-│   │   │   └── _synthetic/   # Analytics logging
-│   │   ├── page.tsx          # Main page
-│   │   └── layout.tsx        # Root layout
-│   ├── components/           # React components
-│   │   ├── FileList.tsx
-│   │   ├── Breadcrumbs.tsx
-│   │   ├── ActionToolbar.tsx
-│   │   └── ContextMenu.tsx
-│   ├── lib/
-│   │   ├── prisma.ts         # Prisma client instance
-│   │   └── logger.ts         # Event logging utility
-│   └── types/                # TypeScript type definitions
-├── uploads/                   # File storage directory
-└── package.json
-```
-
-## 🗄️ Database Schema
-
-```prisma
-model Item {
-  id           String   @id @default(cuid())
-  name         String
-  type         String   // 'file' or 'folder'
-  parentId     String?  @map("parent_id")
-  size         Int?     // File size in bytes (null for folders)
-  filePath     String?  @map("file_path") // Physical path on disk (null for folders)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  // Self-referential relation for hierarchy
-  parent       Item?    @relation("ItemHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children     Item[]   @relation("ItemHierarchy")
-
-  @@unique([name, parentId]) // Ensure unique names within the same parent
-  @@map("items")
-}
-```
-
 ## 🔌 API Endpoints
 
 ### Folder Operations
