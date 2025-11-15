@@ -1,10 +1,8 @@
-// src/pages/api/upload.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import formidable, { File } from "formidable";
 import fs from "fs/promises";
 import path from "path";
 
-// Disable body parser for file upload
 export const config = {
   api: {
     bodyParser: false,
@@ -26,14 +24,12 @@ export default async function handler(
   }
 
   try {
-    // Parse form data
     const form = formidable({
       uploadDir: path.join(process.cwd(), "public", "uploads"),
       keepExtensions: true,
-      maxFileSize: 100 * 1024 * 1024, // 100MB limit
+      maxFileSize: 100 * 1024 * 1024,
     });
 
-    // Ensure upload directory exists
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     try {
       await fs.access(uploadDir);
@@ -56,7 +52,6 @@ export default async function handler(
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Generate unique filename
     const originalName = uploadedFile.originalFilename || "unnamed";
     const extension = path.extname(originalName);
     const nameWithoutExt = path.basename(originalName, extension);
@@ -66,10 +61,8 @@ export default async function handler(
     const oldPath = uploadedFile.filepath;
     const newPath = path.join(uploadDir, newFilename);
 
-    // Move file to permanent location
     await fs.rename(oldPath, newPath);
 
-    // Return file info
     return res.status(200).json({
       fileName: originalName,
       fileLink: `/uploads/${newFilename}`,

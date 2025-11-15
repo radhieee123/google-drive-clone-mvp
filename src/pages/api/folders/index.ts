@@ -1,4 +1,3 @@
-// src/pages/api/folders/index.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/server/db";
 
@@ -21,7 +20,6 @@ export default async function handler(
   }
 }
 
-// Create folder
 async function handlePost(
   req: NextApiRequest,
   res: NextApiResponse,

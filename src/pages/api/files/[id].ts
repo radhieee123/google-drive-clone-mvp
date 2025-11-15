@@ -1,4 +1,3 @@
-// src/pages/api/files/[id].ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/server/db";
 
@@ -24,7 +23,6 @@ export default async function handler(
   }
 }
 
-// Update file (rename, star, trash)
 async function handlePatch(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -34,7 +32,6 @@ async function handlePatch(
   try {
     const updates = req.body;
 
-    // Verify ownership
     const file = await db.file.findUnique({
       where: { id: fileId },
     });
@@ -55,7 +52,6 @@ async function handlePatch(
   }
 }
 
-// Delete file
 async function handleDelete(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -63,7 +59,6 @@ async function handleDelete(
   fileId: string,
 ) {
   try {
-    // Verify ownership
     const file = await db.file.findUnique({
       where: { id: fileId },
     });

@@ -1,4 +1,3 @@
-// src/pages/api/files/index.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/server/db";
 
@@ -7,7 +6,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { method } = req;
-  const userId = req.headers["x-user-id"] as string; // In real app, get from session/JWT
+  const userId = req.headers["x-user-id"] as string;
 
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -23,7 +22,6 @@ export default async function handler(
   }
 }
 
-// Get files and folders
 async function handleGet(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -37,7 +35,7 @@ async function handleGet(
     if (folderId) {
       whereClause.folderId = folderId as string;
     } else {
-      whereClause.folderId = null; // Root level
+      whereClause.folderId = null;
     }
 
     if (starred === "true") {
@@ -73,7 +71,6 @@ async function handleGet(
   }
 }
 
-// Create file
 async function handlePost(
   req: NextApiRequest,
   res: NextApiResponse,
