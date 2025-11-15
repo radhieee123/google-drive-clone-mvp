@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64 # Force x64 build
+    platform: linux/amd64 # Force x64 runtime
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    platform: linux/amd64 # Match architecture
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"

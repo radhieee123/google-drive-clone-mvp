@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useMockAuth } from "@/contexts/MockAuthContext";
 import Login from "@/components/Login";
-import { getFiles } from "@/lib/api-client";
+import { getFiles, getFolderById } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 
 function Folder() {
@@ -35,12 +35,13 @@ function Folder() {
     try {
       setIsLoading(true);
       const data = await getFiles(folderId);
+      const folderData = await getFolderById(folderId);
 
       setFiles(data.files || []);
       setFolders(data.folders || []);
 
-      if (data.currentFolder?.folderName) {
-        setCurrentFolderName(data.currentFolder.folderName);
+      if (folderData?.folderName) {
+        setCurrentFolderName(folderData.folderName);
       }
 
       const hasFolders = (data.folders || []).length > 0;
