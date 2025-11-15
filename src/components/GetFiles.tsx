@@ -1,237 +1,152 @@
-import React from "react";
-import { HiOutlineArrowsExpand } from "react-icons/hi";
-import {
-  MdDriveFileRenameOutline,
-  MdOutlineRestore,
-  MdStarBorder,
-  MdStarRate,
-} from "react-icons/md";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { TbDownload } from "react-icons/tb";
-import {
-  deleteFile,
-  deleteFolder,
-  renameFile,
-  renameFolder,
-  starFile,
-  starFolder,
-  trashFile,
-  trashFolder,
-} from "@/lib/api-client";
-import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import fileIcons from "@/components/fileIcons";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { useMockAuth } from "@/contexts/MockAuthContext";
+import FileDropDown from "./FileDropDown";
+import { getFiles } from "@/lib/api-client";
+import Rename from "./Rename";
 import { logClick } from "@/lib/logger";
 
-function FileDropDown({
-  file,
-  setOpenMenu,
-  select,
-  isFolderComp,
-  folderId,
-  setRenameToggle,
-}: FileDropDownProps) {
-  const router = useRouter();
+interface GetFilesProps {
+  folderId: string;
+  select: string;
+}
 
-  const openFile = (fileLink: string) => {
-    logClick(
-      `Open ${isFolderComp ? "folder" : "file"}: ${
-        file.fileName || file.folderName
-      }`,
-      isFolderComp ? `folder-${file.id}` : `file-${file.id}`,
-    );
+function GetFiles({ folderId, select }: GetFilesProps) {
+  const [openMenu, setOpenMenu] = useState("");
+  const [renameToggle, setRenameToggle] = useState("");
+  const [fileList, setFileList] = useState<any[]>([]);
+
+  const { user } = useMockAuth();
+
+  useEffect(() => {
+    if (user) {
+      loadFiles();
+    }
+  }, [folderId, select, user]);
+
+  const loadFiles = async () => {
+    try {
+      const starred = select === "starred";
+      const trashed = select === "trashed";
+
+      const data = await getFiles(folderId || undefined, starred, trashed);
+      setFileList(data.files || []);
+    } catch (error) {
+      console.error("Error loading files:", error);
+      setFileList([]);
+    }
+  };
+
+  const openFile = (fileLink: string, fileName: string, fileId: string) => {
+    logClick(`Open file: ${fileName}`, `file-open-${fileId}`);
     window.open(fileLink, "_blank");
   };
 
-  const handleStar = async () => {
+  const handleMenuToggle = (
+    fileId: string,
+    fileName: string,
+    e: React.MouseEvent,
+  ) => {
     logClick(
-      `${file.isStarred ? "Unstar" : "Star"} ${
-        isFolderComp ? "folder" : "file"
-      }: ${file.fileName || file.folderName}`,
-      `${isFolderComp ? "folder" : "file"}-star-${file.id}`,
+      `Toggle menu for file: ${fileName}`,
+      `file-menu-toggle-${fileId}`,
+      { x: e.clientX, y: e.clientY },
     );
-
-    try {
-      if (isFolderComp) {
-        await starFolder(file.id, !file.isStarred);
-      } else {
-        await starFile(file.id, !file.isStarred);
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error("Error starring:", error);
-      alert("Failed to star item");
-    }
+    setRenameToggle("");
+    setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
 
-  const handleTrash = async () => {
-    logClick(
-      `Move to trash ${isFolderComp ? "folder" : "file"}: ${
-        file.fileName || file.folderName
-      }`,
-      `${isFolderComp ? "folder" : "file"}-trash-${file.id}`,
+  const list = fileList.map((file) => {
+    const icon =
+      fileIcons[file.fileExtension as keyof typeof fileIcons] ??
+      fileIcons["any"];
+
+    const img = ["jpg", "ico", "webp", "png", "jpeg", "gif", "jfif"].includes(
+      file.fileExtension,
+    ) ? (
+      <Image
+        src={file.fileLink}
+        alt={file.fileName}
+        height="500"
+        width="500"
+        draggable={false}
+        className="h-full w-full rounded-sm object-cover object-center"
+      />
+    ) : file.fileExtension === "mp3" ? (
+      <div className="flex flex-col items-center justify-center">
+        <div className="h-24 w-24 ">{icon}</div>
+        <audio controls className="w-44">
+          <source src={file.fileLink} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+    ) : file.fileExtension === "mp4" ? (
+      <video controls>
+        <source src={file.fileLink} type="audio/mpeg" />
+        <div className="h-36 w-36 ">{icon}</div>
+      </video>
+    ) : (
+      <div className="h-36 w-36 ">{icon}</div>
     );
 
-    try {
-      if (isFolderComp) {
-        await trashFolder(file.id, true);
-      } else {
-        await trashFile(file.id, true);
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error("Error trashing:", error);
-      alert("Failed to move to trash");
-    }
-  };
+    let condition = !file?.isTrashed;
+    if (select === "starred") condition = file?.isStarred && !file?.isTrashed;
+    else if (select === "trashed") condition = file?.isTrashed;
 
-  const handleRestore = async () => {
-    logClick(
-      `Restore ${isFolderComp ? "folder" : "file"}: ${
-        file.fileName || file.folderName
-      }`,
-      `${isFolderComp ? "folder" : "file"}-restore-${file.id}`,
+    return (
+      condition && (
+        <div
+          key={file.id}
+          onDoubleClick={() => openFile(file.fileLink, file.fileName, file.id)}
+          className="hover:cursor-alias"
+        >
+          <div
+            className="flex w-full cursor-pointer flex-col items-center justify-center
+         overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
+          >
+            <div className="relative flex w-full items-center justify-between px-1 py-3">
+              <div className="flex items-center space-x-4">
+                <div className="h-6 w-6">{icon}</div>
+                <span className="w-32 truncate text-sm font-medium text-textC">
+                  {file.fileName}
+                </span>
+              </div>
+              <BsThreeDotsVertical
+                onClick={(e) => handleMenuToggle(file.id, file.fileName, e)}
+                className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
+              />
+              {openMenu === file.id && (
+                <FileDropDown
+                  file={file}
+                  setOpenMenu={setOpenMenu}
+                  isFolderComp={false}
+                  select={select}
+                  folderId=""
+                  setRenameToggle={setRenameToggle}
+                />
+              )}
+              {renameToggle === file.id && (
+                <Rename
+                  setRenameToggle={setRenameToggle}
+                  fileId={file.id}
+                  isFolder={false}
+                  fileName={file.fileName}
+                  fileExtension={file.fileExtension}
+                />
+              )}
+            </div>
+            <div className="flex h-44 w-48 items-center justify-center pb-2.5">
+              {img}
+            </div>
+          </div>
+        </div>
+      )
     );
+  });
 
-    try {
-      if (isFolderComp) {
-        await trashFolder(file.id, false);
-      } else {
-        await trashFile(file.id, false);
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error("Error restoring:", error);
-      alert("Failed to restore item");
-    }
-  };
-
-  const handleDelete = async () => {
-    logClick(
-      `Delete permanently ${isFolderComp ? "folder" : "file"}: ${
-        file.fileName || file.folderName
-      }`,
-      `${isFolderComp ? "folder" : "file"}-delete-${file.id}`,
-    );
-
-    const confirmed = window.confirm(
-      `Are you sure you want to permanently delete this ${
-        isFolderComp ? "folder" : "file"
-      }?`,
-    );
-
-    if (!confirmed) return;
-
-    try {
-      if (isFolderComp) {
-        await deleteFolder(file.id);
-      } else {
-        await deleteFile(file.id);
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting:", error);
-      alert("Failed to delete item");
-    }
-  };
-
-  const handleRename = () => {
-    logClick(
-      `Rename ${isFolderComp ? "folder" : "file"}: ${
-        file.fileName || file.folderName
-      }`,
-      `${isFolderComp ? "folder" : "file"}-rename-${file.id}`,
-    );
-    setRenameToggle(file.id);
-  };
-
-  const handleDownloadClick = (e: React.MouseEvent) => {
-    logClick(`Download file: ${file.fileName}`, `file-download-${file.id}`, {
-      x: e.clientX,
-      y: e.clientY,
-    });
-  };
-
-  return (
-    <section
-      onClick={() => setOpenMenu("")}
-      className={`absolute top-9 z-10 ${
-        select == "trashed" ? "h-fit" : "h-40"
-      } w-48 overflow-y-scroll rounded-md border bg-white shadow-sm shadow-[#777]`}
-    >
-      {select !== "trashed" ? (
-        <>
-          <div
-            onClick={() =>
-              isFolderComp
-                ? router.push("/drive/folders/" + folderId)
-                : openFile(file.fileLink)
-            }
-            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-          >
-            <HiOutlineArrowsExpand className="h-5 w-5" />
-            <span className="text-sm">
-              Open {isFolderComp ? "Folder" : "File"}
-            </span>
-          </div>
-          {!isFolderComp && (
-            <a
-              href={file.fileLink}
-              download={file.fileName}
-              onClick={handleDownloadClick}
-              className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-            >
-              <TbDownload className="h-5 w-5" />
-              <span className="text-sm">Download</span>
-            </a>
-          )}
-
-          <div
-            onClick={handleRename}
-            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-          >
-            <MdDriveFileRenameOutline className="h-5 w-5" />
-            <span className="text-sm">Rename</span>
-          </div>
-          <div
-            onClick={handleStar}
-            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-          >
-            {!file.isStarred ? (
-              <MdStarBorder className="h-5 w-5" />
-            ) : (
-              <MdStarRate className="h-5 w-5" />
-            )}
-            <span className="text-sm">
-              {file.isStarred ? "Remove from starred" : "Add to starred"}
-            </span>
-          </div>
-          <div
-            onClick={handleTrash}
-            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-          >
-            <RiDeleteBin6Line className="h-5 w-5" />
-            <span className="text-sm">Move to bin</span>
-          </div>
-        </>
-      ) : (
-        <>
-          <div
-            onClick={handleRestore}
-            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-          >
-            <MdOutlineRestore className="h-5 w-5" />
-            <span className="text-sm">Restore</span>
-          </div>
-          <div
-            onClick={handleDelete}
-            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
-          >
-            <RiDeleteBin6Line className="h-5 w-5" />
-            <span className="text-sm">Delete forever</span>
-          </div>
-        </>
-      )}
-    </section>
-  );
+  return <>{list}</>;
 }
 
-export default FileDropDown;
+export default GetFiles;

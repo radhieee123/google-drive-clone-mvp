@@ -1,5 +1,3 @@
-// prisma/seed-no-images.ts
-// Alternative seed without external image URLs
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -7,15 +5,14 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Create demo users (without image URLs)
   const demoUser = await prisma.user.upsert({
     where: { email: "demo@example.com" },
     update: {},
     create: {
       email: "demo@example.com",
       name: "Demo User",
-      password: "password", // In production, hash this!
-      image: null, // No external image
+      password: "password",
+      image: null,
     },
   });
 
@@ -26,7 +23,7 @@ async function main() {
       email: "test@example.com",
       name: "Test User",
       password: "password",
-      image: null, // No external image
+      image: null,
     },
   });
 
@@ -35,7 +32,6 @@ async function main() {
     test: testUser.email,
   });
 
-  // Create sample folder for demo user
   const documentsFolder = await prisma.folder.create({
     data: {
       folderName: "Documents",
@@ -52,7 +48,6 @@ async function main() {
 
   console.log("✅ Created sample folders");
 
-  // Create sample files
   const sampleFile1 = await prisma.file.create({
     data: {
       fileName: "Welcome.txt",

@@ -8,13 +8,12 @@ import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";
 import { logClick } from "@/lib/logger";
 
-function GetFolders({
-  folderId,
-  select,
-}: {
+interface GetFoldersProps {
   folderId: string;
   select: string;
-}) {
+}
+
+function GetFolders({ folderId, select }: GetFoldersProps) {
   const [openMenu, setOpenMenu] = useState("");
   const [renameToggle, setRenameToggle] = useState("");
   const [folderList, setFolderList] = useState<any[]>([]);

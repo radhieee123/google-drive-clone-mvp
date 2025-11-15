@@ -10,6 +10,8 @@ import { useMockAuth } from "@/contexts/MockAuthContext";
 import Login from "@/components/Login";
 import { getFiles, getFolderById } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
+import { logCustom } from "@/lib/logger";
+import { useComponentTracking } from "@/lib/logger/hooks";
 
 function Folder() {
   const [isFolder, setIsFolder] = useState(false);
@@ -25,6 +27,28 @@ function Folder() {
 
   const folderId = Folder?.[0] || "";
 
+  useComponentTracking("FolderPage");
+
+  useEffect(() => {
+    if (folderId && currentFolderName) {
+      logCustom(`User viewing folder: ${currentFolderName}`, "FOLDER_VIEW", {
+        folderId,
+        folderName: currentFolderName,
+        hasFiles: isFile,
+        hasFolders: isFolder,
+        fileCount: files.length,
+        folderCount: folders.length,
+      });
+    }
+  }, [
+    folderId,
+    currentFolderName,
+    isFile,
+    isFolder,
+    files.length,
+    folders.length,
+  ]);
+
   useEffect(() => {
     if (!authLoading && isAuthenticated && user && folderId) {
       loadFiles();
@@ -34,6 +58,11 @@ function Folder() {
   const loadFiles = async () => {
     try {
       setIsLoading(true);
+
+      logCustom(`Loading folder contents: ${folderId}`, "FOLDER_LOAD_START", {
+        folderId,
+      });
+
       const data = await getFiles(folderId);
       const folderData = await getFolderById(folderId);
 
@@ -49,8 +78,24 @@ function Folder() {
 
       setIsFolder(hasFolders);
       setIsFile(hasFiles);
+
+      logCustom(
+        `Folder loaded successfully: ${folderData?.folderName || folderId}`,
+        "FOLDER_LOAD_SUCCESS",
+        {
+          folderId,
+          folderName: folderData?.folderName,
+          fileCount: (data.files || []).length,
+          folderCount: (data.folders || []).length,
+        },
+      );
     } catch (error) {
       console.error("Error loading files:", error);
+
+      logCustom(`Failed to load folder: ${folderId}`, "FOLDER_LOAD_ERROR", {
+        folderId,
+        error: String(error),
+      });
     } finally {
       setTimeout(() => {
         setIsLoading(false);
@@ -73,7 +118,7 @@ function Folder() {
   return (
     <>
       <Head>
-        <title>Folder - Google Drive</title>
+        <title>{currentFolderName} - Google Drive</title>
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
