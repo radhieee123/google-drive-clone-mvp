@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import {
   AiOutlineClockCircle,
@@ -23,16 +23,47 @@ interface NavItem {
   path: string;
 }
 
+interface Folder {
+  id: string;
+  folderName: string;
+}
+
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
   const [progress, setProgress] = useState([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [folderName, setFolderName] = useState<string>("");
   const [folderToggle, setFolderToggle] = useState(false);
+  const [folders, setFolders] = useState<Folder[]>([]);
 
   const router = useRouter();
   const { Folder } = router.query;
   const { user } = useMockAuth();
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await fetch("/api/folders", {
+          headers: {
+            "x-user-id": user?.id || "",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch folders");
+        }
+
+        const folderList = await response.json();
+        setFolders(folderList);
+      } catch (error) {
+        console.error("Error fetching folders:", error);
+      }
+    };
+
+    if (user) {
+      fetchFolders();
+    }
+  }, [user]);
 
   const navItems: NavItem[] = [
     {
@@ -62,7 +93,10 @@ function SideMenu() {
     },
   ];
 
-  const handleUploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleUploadFile = async (
+    e: ChangeEvent<HTMLInputElement>,
+    selectedFolderId?: string,
+  ) => {
     const files = e.target.files || [];
 
     for (let i = 0; i < files.length; i++) {
@@ -72,7 +106,8 @@ function SideMenu() {
       setFileName((prev) => [...prev, file.name]);
 
       try {
-        await uploadFile(file, setProgress, Folder?.[1] as string);
+        const targetFolderId = selectedFolderId || (Folder?.[1] as string);
+        await uploadFile(file, setProgress, targetFolderId);
       } catch (error) {
         console.error("Upload error:", error);
         alert(`Failed to upload ${file.name}`);
@@ -121,6 +156,7 @@ function SideMenu() {
           setFolderToggle={setFolderToggle}
           uploadFile={handleUploadFile}
           setIsDropDown={setIsDropDown}
+          folders={folders.map((f) => ({ id: f.id, name: f.folderName }))}
         />
       )}
 

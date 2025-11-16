@@ -347,3 +347,24 @@ export async function getFolderPath(folderId: string) {
     throw error;
   }
 }
+
+export const getAllFolders = async () => {
+  const endpoint = `${API_BASE}/folders`;
+
+  try {
+    const response = await fetch(endpoint, {
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "GET", false, `HTTP ${response.status}`);
+      throw new Error("Failed to get folders");
+    }
+
+    await logApiCall(endpoint, "GET", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "GET", false, String(error));
+    throw error;
+  }
+};

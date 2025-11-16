@@ -16,18 +16,18 @@ function Header() {
 
   return (
     <header className="flex h-14 w-full items-center bg-white px-4 shadow-sm">
-      <div className="flex min-w-[176px] items-center pr-3">
+      <div className="flex w-64 items-center">
         <img
           src="/logo.png"
           alt="Drive"
-          className="h-8 w-8"
+          className="h-10 w-10"
           draggable={false}
         />
-        <span className="ml-2 select-none font-sans text-[22px] font-semibold tracking-tight text-gray-800">
+        <span className="ml-2 select-none font-sans text-[22px] tracking-tight text-gray-800">
           Drive
         </span>
       </div>
-      <div className="flex flex-1 justify-center">
+      <div className="justify-left flex flex-1">
         <div className="flex h-10 w-full max-w-2xl items-center rounded-[24px]">
           {isAuthenticated && <Search />}
         </div>

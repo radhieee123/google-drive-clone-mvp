@@ -1,12 +1,6 @@
 "use client";
-import React, { useRef, useEffect } from "react";
-import {
-  BsFolder2,
-  BsFileEarmarkArrowUp,
-  BsFolderPlus,
-  BsFileEarmarkPlus,
-} from "react-icons/bs";
-import { AiOutlineFile, AiOutlineUpload } from "react-icons/ai";
+import React, { useRef, useEffect, useState } from "react";
+import { BsFolder2, BsFolderPlus } from "react-icons/bs";
 import {
   HiOutlineDocumentText,
   HiOutlineTable,
@@ -16,8 +10,12 @@ import { MdOutlineUploadFile } from "react-icons/md";
 
 interface DropDownProps {
   setFolderToggle: (value: boolean) => void;
-  uploadFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  uploadFile: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    folderId?: string,
+  ) => void;
   setIsDropDown: (value: boolean) => void;
+  folders?: Array<{ id: string; name: string }>;
 }
 
 interface MenuItem {
@@ -31,12 +29,15 @@ function DropDown({
   setFolderToggle,
   uploadFile,
   setIsDropDown,
+  folders = [],
 }: DropDownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
 
-  // Close dropdown when clicking outside
+  const [showFolderSelector, setShowFolderSelector] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<FileList | null>(null);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -62,6 +63,36 @@ function DropDown({
 
   const handleFolderUpload = () => {
     folderInputRef.current?.click();
+  };
+
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setPendingFiles(e.target.files);
+      setShowFolderSelector(true);
+    }
+  };
+
+  const handleFolderChoice = (folderId?: string) => {
+    if (pendingFiles) {
+      const syntheticEvent = {
+        target: {
+          files: pendingFiles,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      uploadFile(syntheticEvent, folderId);
+      setPendingFiles(null);
+      setShowFolderSelector(false);
+      setIsDropDown(false);
+
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCancelFolderSelection = () => {
+    setShowFolderSelector(false);
+    setPendingFiles(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const menuItems: MenuItem[] = [
@@ -133,15 +164,65 @@ function DropDown({
         ))}
       </div>
 
-      {/* Hidden File Inputs */}
+      {showFolderSelector && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
+          <div className="w-96 rounded-lg bg-white p-6 shadow-xl">
+            <h3 className="mb-4 text-lg font-semibold text-[#202124]">
+              Choose destination folder
+            </h3>
+
+            <p className="mb-4 text-sm text-[#5f6368]">
+              {pendingFiles?.length} file(s) selected
+            </p>
+
+            <div className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
+              <button
+                onClick={() => handleFolderChoice(undefined)}
+                className="w-full rounded px-4 py-2 text-left transition-colors hover:bg-[#f1f3f4]"
+              >
+                <div className="flex items-center gap-3">
+                  <BsFolder2 className="h-5 w-5 text-[#5f6368]" />
+                  <span className="text-sm font-medium">My Drive (Root)</span>
+                </div>
+              </button>
+
+              {folders.length > 0 ? (
+                folders.map((folder) => (
+                  <button
+                    key={folder.id}
+                    onClick={() => handleFolderChoice(folder.id)}
+                    className="w-full rounded px-4 py-2 text-left transition-colors hover:bg-[#f1f3f4]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <BsFolder2 className="h-5 w-5 text-[#5f6368]" />
+                      <span className="text-sm">{folder.name}</span>
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <p className="px-4 py-2 text-sm text-[#5f6368]">
+                  No folders available
+                </p>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                onClick={handleCancelFolderSelection}
+                className="rounded px-4 py-2 text-sm text-[#5f6368] hover:bg-[#f1f3f4]"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <input
         ref={fileInputRef}
         type="file"
         multiple
-        onChange={(e) => {
-          uploadFile(e);
-          setIsDropDown(false);
-        }}
+        onChange={handleFileSelected}
         className="hidden"
       />
       <input
@@ -152,7 +233,7 @@ function DropDown({
         directory="true"
         multiple
         onChange={(e) => {
-          uploadFile(e);
+          uploadFile(e, undefined);
           setIsDropDown(false);
         }}
         className="hidden"
