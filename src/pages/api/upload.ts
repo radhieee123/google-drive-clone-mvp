@@ -1,7 +1,13 @@
+// src/pages/api/upload.ts
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable, { File } from "formidable";
+import formidable from "formidable";
 import fs from "fs/promises";
 import path from "path";
+
+const isVercel =
+  process.env.VERCEL === "1" ||
+  !!process.env.BLOB_READ_WRITE_TOKEN ||
+  process.env.VERCEL_ENV !== undefined;
 
 export const config = {
   api: {
@@ -13,6 +19,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  console.log("=== Upload API Called ===");
+  console.log("isVercel:", isVercel);
+
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -24,53 +33,114 @@ export default async function handler(
   }
 
   try {
-    const form = formidable({
-      uploadDir: path.join(process.cwd(), "public", "uploads"),
-      keepExtensions: true,
-      maxFileSize: 100 * 1024 * 1024,
-    });
+    if (isVercel) {
+      console.log("=== Using Vercel Blob Storage ===");
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
+      // Dynamic import - only loads on Vercel
+      const { put } = await import("@vercel/blob");
 
-    const [fields, files] = await new Promise<
-      [formidable.Fields, formidable.Files]
-    >((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve([fields, files]);
+      const form = formidable({
+        maxFileSize: 100 * 1024 * 1024,
       });
-    });
 
-    const uploadedFile = Array.isArray(files.file) ? files.file[0] : files.file;
+      const [fields, files] = await new Promise<
+        [formidable.Fields, formidable.Files]
+      >((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) reject(err);
+          else resolve([fields, files]);
+        });
+      });
 
-    if (!uploadedFile) {
-      return res.status(400).json({ message: "No file uploaded" });
+      const uploadedFile = Array.isArray(files.file)
+        ? files.file[0]
+        : files.file;
+
+      if (!uploadedFile) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const originalName = uploadedFile.originalFilename || "unnamed";
+      const extension = path.extname(originalName);
+      const fileBuffer = await fs.readFile(uploadedFile.filepath);
+
+      const blob = await put(
+        `uploads/${userId}/${Date.now()}-${originalName}`,
+        fileBuffer,
+        {
+          access: "public",
+          addRandomSuffix: true,
+        },
+      );
+
+      console.log("Uploaded to Blob:", blob.url);
+
+      return res.status(200).json({
+        fileName: originalName,
+        fileLink: blob.url,
+        fileSize: uploadedFile.size,
+        fileExtension: extension.replace(".", ""),
+      });
+    } else {
+      console.log("=== Using Local File System ===");
+
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+
+      try {
+        await fs.access(uploadDir);
+      } catch {
+        await fs.mkdir(uploadDir, { recursive: true });
+      }
+
+      const form = formidable({
+        uploadDir: uploadDir,
+        keepExtensions: true,
+        maxFileSize: 100 * 1024 * 1024,
+      });
+
+      const [fields, files] = await new Promise<
+        [formidable.Fields, formidable.Files]
+      >((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) reject(err);
+          else resolve([fields, files]);
+        });
+      });
+
+      const uploadedFile = Array.isArray(files.file)
+        ? files.file[0]
+        : files.file;
+
+      if (!uploadedFile) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const originalName = uploadedFile.originalFilename || "unnamed";
+      const extension = path.extname(originalName);
+      const nameWithoutExt = path.basename(originalName, extension);
+      const timestamp = Date.now();
+      const newFilename = `${nameWithoutExt}-${timestamp}${extension}`;
+
+      const oldPath = uploadedFile.filepath;
+      const newPath = path.join(uploadDir, newFilename);
+
+      await fs.rename(oldPath, newPath);
+
+      const publicUrl = `/uploads/${newFilename}`;
+
+      return res.status(200).json({
+        fileName: originalName,
+        fileLink: publicUrl,
+        fileSize: uploadedFile.size,
+        fileExtension: extension.replace(".", ""),
+      });
     }
-
-    const originalName = uploadedFile.originalFilename || "unnamed";
-    const extension = path.extname(originalName);
-    const nameWithoutExt = path.basename(originalName, extension);
-    const timestamp = Date.now();
-    const newFilename = `${nameWithoutExt}-${timestamp}${extension}`;
-
-    const oldPath = uploadedFile.filepath;
-    const newPath = path.join(uploadDir, newFilename);
-
-    await fs.rename(oldPath, newPath);
-
-    return res.status(200).json({
-      fileName: originalName,
-      fileLink: `/uploads/${newFilename}`,
-      fileSize: uploadedFile.size,
-      fileExtension: extension.replace(".", ""),
-    });
   } catch (error) {
-    console.error("Upload error:", error);
-    return res.status(500).json({ message: "Upload failed" });
+    console.error("=== Upload Error ===");
+    console.error(error);
+    return res.status(500).json({
+      message: "Upload failed",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 }

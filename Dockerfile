@@ -4,7 +4,12 @@ FROM base AS deps
 WORKDIR /app
 
 COPY package*.json ./
+
+COPY prisma ./prisma/
+
+
 RUN npm ci
+RUN npm install sharp
 
 FROM base AS builder
 WORKDIR /app
