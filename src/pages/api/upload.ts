@@ -1,4 +1,3 @@
-// src/pages/api/upload.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import fs from "fs/promises";
@@ -36,7 +35,6 @@ export default async function handler(
     if (isVercel) {
       console.log("=== Using Vercel Blob Storage ===");
 
-      // Dynamic import - only loads on Vercel
       const { put } = await import("@vercel/blob");
 
       const form = formidable({

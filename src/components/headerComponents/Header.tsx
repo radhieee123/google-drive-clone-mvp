@@ -1,5 +1,10 @@
+"use client";
 import React, { useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
+import { HiOutlineSearch } from "react-icons/hi";
+import { IoMdHelpCircleOutline, IoMdSettings } from "react-icons/io";
+import { TbGridDots } from "react-icons/tb";
+import { RiArrowDropDownLine } from "react-icons/ri";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { useMockAuth } from "@/contexts/MockAuthContext";
 import {
   MdOutlineApps,
@@ -11,52 +16,56 @@ import Search from "./Search";
 import UserInfo from "./UserInfo";
 
 function Header() {
+  const [searchFocused, setSearchFocused] = useState(false);
   const [displayUserInfo, setDisplayUserInfo] = useState(false);
   const { user, isAuthenticated } = useMockAuth();
 
   return (
-    <header className="flex h-14 w-full items-center bg-white px-4 shadow-sm">
-      <div className="flex w-64 items-center">
-        <img
-          src="/logo.png"
-          alt="Drive"
-          className="h-10 w-10"
-          draggable={false}
-        />
-        <span className="ml-2 select-none font-sans text-[22px] tracking-tight text-gray-800">
-          Drive
-        </span>
+    <header className="flex h-16 items-center justify-between border-b border-[#e8eaed] bg-white px-4">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.png"
+            alt="Drive"
+            className="h-10 w-10"
+            draggable={false}
+          />
+
+          <span className="text-[22px] text-[#5f6368]">Drive</span>
+        </div>
       </div>
-      <div className="justify-left flex flex-1">
-        <div className="flex h-10 w-full max-w-2xl items-center rounded-[24px]">
+
+      <div className="flex flex-1 justify-center px-8">
+        <div
+          className={`flex w-full max-w-[720px] items-center rounded-lg transition-all ${
+            searchFocused
+              ? "bg-white shadow-[0_1px_1px_0_rgba(65,69,73,0.3),0_1px_3px_1px_rgba(65,69,73,0.15)]"
+              : "bg-[#f1f3f4]"
+          }`}
+        >
           {isAuthenticated && <Search />}
         </div>
       </div>
-      <div className="flex min-w-[140px] items-center justify-end gap-2">
-        <button className="rounded-full p-2 hover:bg-gray-100">
-          <MdOutlineApps size={24} />
+
+      <div className="flex items-center gap-1">
+        <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-[#f1f3f4]">
+          <AiOutlineQuestionCircle className="h-5 w-5 text-[#5f6368]" />
         </button>
-        <button className="rounded-full p-2 hover:bg-gray-100">
-          <MdOutlineNotifications size={24} />
+
+        <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-[#f1f3f4]">
+          <IoMdSettings className="h-5 w-5 text-[#5f6368]" />
         </button>
-        <button className="rounded-full p-2 hover:bg-gray-100">
-          <MdOutlineHelpOutline size={24} />
+
+        <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-[#f1f3f4]">
+          <TbGridDots className="h-5 w-5 text-[#5f6368]" />
         </button>
-        <div
+
+        <button
           onClick={() => setDisplayUserInfo((prev) => !prev)}
-          className="ml-1 flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gray-200 hover:bg-gray-300"
+          className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#ea4335] text-sm font-medium text-white hover:ring-2 hover:ring-gray-300"
         >
-          {user && user.image ? (
-            <img
-              src={user.image}
-              className="h-full w-full object-cover"
-              draggable={false}
-              alt="avatar"
-            />
-          ) : (
-            <FaUserCircle className="h-full w-full text-gray-500" />
-          )}
-        </div>
+          {user?.email?.[0]?.toUpperCase() || "U"}
+        </button>
         <div className="absolute right-5 top-16">
           {isAuthenticated && displayUserInfo && (
             <UserInfo setDisplayUserInfo={setDisplayUserInfo} />

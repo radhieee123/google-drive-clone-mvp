@@ -1,6 +1,6 @@
 import type { Log, LogEventInput, ActionType, LogPayload } from "./types";
 
-const LOGGING_ENDPOINT = "/_synthetic/log_event";
+const LOGGING_ENDPOINT = "/api/_synthetic/log_event";
 const SESSION_ID_KEY = "synthetic_log_session_id";
 
 let logIdCounter = 0;

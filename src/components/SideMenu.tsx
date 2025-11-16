@@ -67,27 +67,47 @@ function SideMenu() {
 
   const navItems: NavItem[] = [
     {
-      icon: <BsFolder2 className="h-5 w-5" />,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+        </svg>
+      ),
       label: "My Drive",
       path: "/drive/my-drive",
     },
     {
-      icon: <BsPeople className="h-5 w-5" />,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+        </svg>
+      ),
       label: "Shared with me",
       path: "/shared",
     },
     {
-      icon: <AiOutlineClockCircle className="h-5 w-5" />,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+        </svg>
+      ),
       label: "Recent",
       path: "/recent",
     },
     {
-      icon: <AiOutlineStar className="h-5 w-5" />,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+        </svg>
+      ),
       label: "Starred",
       path: "/drive/starred",
     },
     {
-      icon: <AiOutlineDelete className="h-5 w-5" />,
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+        </svg>
+      ),
       label: "Trash",
       path: "/drive/trash",
     },
@@ -130,12 +150,12 @@ function SideMenu() {
   const displayFileNames = [...fileName].reverse();
   const displayProgress = [...progress].reverse();
 
-  const storageUsed = 4.5; // GB
-  const storageTotal = 15; // GB
+  const storageUsed = 4.5;
+  const storageTotal = 15;
   const storagePercentage = (storageUsed / storageTotal) * 100;
 
   return (
-    <aside className="relative flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
+    <aside className="flex h-screen w-64 flex-col bg-white">
       <div className="p-3">
         <button
           onClick={() => setIsDropDown(true)}
@@ -174,61 +194,68 @@ function SideMenu() {
         />
       )}
 
-      <nav className="flex-2 space-y-1 px-3 py-2">
-        {navItems.map((item, index) => {
-          const isActive = router.pathname === item.path;
+      <nav className="flex-1 px-3 py-2">
+        <div className="space-y-1">
+          {navItems.map((item, index) => {
+            const isActive = router.pathname === item.path;
 
-          return (
-            <button
-              key={index}
-              onClick={() => router.push(item.path)}
-              className={`
-                group flex w-full items-center gap-5 rounded-full px-6 py-2.5
-                transition-all duration-150
-                ${
-                  isActive
-                    ? "bg-[#e8f0fe] font-medium text-[#1a73e8]"
-                    : "text-[#5f6368] hover:bg-[#f1f3f4]"
-                }
-              `}
-            >
-              <div
+            return (
+              <button
+                key={index}
+                onClick={() => router.push(item.path)}
                 className={`
-                flex items-center justify-center
-                ${
-                  isActive
-                    ? "text-[#1a73e8]"
-                    : "text-[#5f6368] group-hover:text-[#202124]"
-                }
-              `}
+                  group flex w-full items-center gap-5 rounded-r-full px-5 py-2
+                  transition-colors duration-200
+                  ${
+                    isActive
+                      ? "bg-[#c2e7ff] text-[#041e49]"
+                      : "text-[#5f6368] hover:bg-[#f1f3f4]"
+                  }
+                `}
               >
-                {item.icon}
-              </div>
-              <span
-                className={`text-sm ${
-                  isActive ? "font-medium" : "font-normal"
-                }`}
-              >
-                {item.label}
-              </span>
-            </button>
-          );
-        })}
+                <div
+                  className={`
+                    flex items-center justify-center
+                    ${
+                      isActive
+                        ? "text-[#041e49]"
+                        : "text-[#5f6368] group-hover:text-[#202124]"
+                    }
+                  `}
+                >
+                  {item.icon}
+                </div>
+                <span
+                  className={`text-[14px] ${
+                    isActive ? "font-medium" : "font-normal"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
 
-      <div className="mx-6 border-t border-gray-200"></div>
+      <div className="mx-6 border-t border-[#e8eaed]"></div>
 
-      <div className="space-y-3 p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AiOutlineCloudUpload className="h-5 w-5 text-[#5f6368]" />
-            <span className="text-sm text-[#5f6368]">Storage</span>
-          </div>
-          <BsInfoCircle className="h-4 w-4 cursor-pointer text-[#5f6368] hover:text-[#202124]" />
+      <div className="space-y-3 px-6 py-4">
+        <div className="flex items-center gap-2">
+          <svg
+            className="h-5 w-5 text-[#5f6368]"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17l1.46 1.46C10.21 6.23 11.08 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3s-1.34 3-3 3h-1v2h1c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM3 5.27l2.75 2.74C2.56 8.15 0 10.77 0 14c0 3.31 2.69 6 6 6h11.73l2 2L21 20.73 4.27 4 3 5.27zM7.73 10l8 8H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h1.73z" />
+          </svg>
+          <span className="text-[14px] font-medium text-[#5f6368]">
+            Storage
+          </span>
         </div>
 
-        <div className="w-full">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+        <div className="relative">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-[#e8eaed]">
             <div
               className="h-full rounded-full bg-[#1a73e8] transition-all duration-300"
               style={{ width: `${storagePercentage}%` }}
@@ -236,8 +263,13 @@ function SideMenu() {
           </div>
         </div>
 
-        <div className="text-xs text-[#5f6368]">
-          {storageUsed} GB of {storageTotal} GB used
+        <div>
+          <div className="text-[14px] text-[#5f6368]">
+            {storageUsed} GB of {storageTotal} GB used
+          </div>
+          <button className="mt-2 text-[14px] font-medium text-[#1a73e8] hover:underline">
+            Get more storage
+          </button>
         </div>
       </div>
     </aside>
