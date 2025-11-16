@@ -8,10 +8,16 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useMockAuth } from "@/contexts/MockAuthContext";
 import Login from "@/components/Login";
-import { getFiles, getFolderById } from "@/lib/api-client";
+import { getFiles, getFolderById, getFolderPath } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
 import { logCustom } from "@/lib/logger";
 import { useComponentTracking } from "@/lib/logger/hooks";
+
+interface BreadcrumbItem {
+  id: string;
+  name: string;
+  path: string;
+}
 
 function Folder() {
   const [isFolder, setIsFolder] = useState(false);
@@ -20,6 +26,7 @@ function Folder() {
   const [files, setFiles] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
   const [currentFolderName, setCurrentFolderName] = useState("Nested Folder");
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
 
   const router = useRouter();
   const { Folder } = router.query;
@@ -52,8 +59,50 @@ function Folder() {
   useEffect(() => {
     if (!authLoading && isAuthenticated && user && folderId) {
       loadFiles();
+      loadBreadcrumbs();
     }
   }, [isAuthenticated, user, authLoading, folderId]);
+
+  const loadBreadcrumbs = async () => {
+    try {
+      const pathData = await getFolderPath(folderId);
+
+      // Build breadcrumbs starting with Home
+      const breadcrumbItems: BreadcrumbItem[] = [
+        {
+          id: "root",
+          name: "Home",
+          path: "/",
+        },
+      ];
+
+      // Add each folder in the path
+      pathData.path.forEach((folder: any) => {
+        breadcrumbItems.push({
+          id: folder.id,
+          name: folder.name,
+          path: `/Folder/${folder.id}`,
+        });
+      });
+
+      setBreadcrumbs(breadcrumbItems);
+    } catch (error) {
+      console.error("Error loading breadcrumbs:", error);
+      // Fallback breadcrumbs
+      setBreadcrumbs([
+        {
+          id: "root",
+          name: "Home",
+          path: "/",
+        },
+        {
+          id: folderId,
+          name: currentFolderName,
+          path: `/Folder/${folderId}`,
+        },
+      ]);
+    }
+  };
 
   const loadFiles = async () => {
     try {
@@ -123,7 +172,7 @@ function Folder() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={currentFolderName} />
+        <FileHeader breadcrumbs={breadcrumbs} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">

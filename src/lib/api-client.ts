@@ -325,3 +325,25 @@ export async function getFolderById(folderId: string) {
     throw error;
   }
 }
+
+export async function getFolderPath(folderId: string) {
+  const endpoint = `/api/folders/${folderId}/path`;
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      await logApiCall(endpoint, "GET", false, `HTTP ${response.status}`);
+      throw new Error("Failed to fetch folder path");
+    }
+
+    await logApiCall(endpoint, "GET", true);
+    return response.json();
+  } catch (error) {
+    await logApiCall(endpoint, "GET", false, String(error));
+    throw error;
+  }
+}

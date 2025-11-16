@@ -21,7 +21,7 @@ function Layout({ children }: LayoutProps) {
       <div className="flex flex-1 overflow-hidden">
         <SideMenu />
 
-        <main className="flex-1 overflow-auto bg-bgc">{children}</main>
+        <main className="flex-1 overflow-auto bg-white">{children}</main>
       </div>
     </div>
   );

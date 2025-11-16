@@ -14,6 +14,9 @@ COPY . .
 
 RUN npx prisma generate
 
+RUN npx prisma db push --force-reset
+RUN npx prisma generate
+
 RUN npm run build
 
 FROM base AS runner

@@ -1,23 +1,29 @@
-import { useRouter } from "next/router";
 import React from "react";
+import Breadcrumb from "./Breadcrumb";
 import { AiFillCaretDown } from "react-icons/ai";
-import { BsArrowLeftCircle } from "react-icons/bs";
 
-function FileHeader({ headerName }: { headerName: string }) {
-  const router = useRouter();
-  const isNestedFolder = router.route === "/drive/[...Folder]";
+interface BreadcrumbItem {
+  id: string;
+  name: string;
+  path: string;
+}
 
+interface FileHeaderProps {
+  headerName?: string;
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+export default function FileHeader({
+  headerName,
+  breadcrumbs,
+}: FileHeaderProps) {
   return (
-    <div className="flex flex-col space-y-6 p-5 pb-2">
-      <div className="flex items-center space-x-2 text-2xl text-textC">
-        {isNestedFolder && (
-          <BsArrowLeftCircle
-            className="h-6 w-6 cursor-pointer"
-            onClick={() => router.back()}
-          />
-        )}
-        <h2>{headerName}</h2>
-      </div>
+    <div className=" mb-5 bg-white px-5 py-3">
+      {breadcrumbs ? (
+        <Breadcrumb items={breadcrumbs} />
+      ) : (
+        <h1 className="text-[15px] font-normal text-[#202124]">{headerName}</h1>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <button className="flex items-center space-x-2 rounded-lg border border-textC px-4 py-1 text-sm font-medium">
           <span>Type</span>
@@ -35,5 +41,3 @@ function FileHeader({ headerName }: { headerName: string }) {
     </div>
   );
 }
-
-export default FileHeader;

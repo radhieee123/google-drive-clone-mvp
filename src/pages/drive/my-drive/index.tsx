@@ -18,6 +18,14 @@ export default function Home() {
 
   const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
+  const breadcrumbs = [
+    {
+      id: "root",
+      name: "Home",
+      path: "/",
+    },
+  ];
+
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {
       loadFiles();
@@ -68,8 +76,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={"My Drive"} />
-        <div className="h-[75vh] w-full overflow-y-auto p-5">
+        <FileHeader breadcrumbs={breadcrumbs} />
+        <div className="h-[75vh] w-full overflow-y-auto bg-white p-5">
           {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">
               <DotLoader color="#b8c2d7" size={60} />
