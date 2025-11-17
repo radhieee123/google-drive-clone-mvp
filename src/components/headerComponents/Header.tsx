@@ -22,7 +22,7 @@ function Header() {
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-[#e8eaed] bg-white px-4">
-      <div className="flex items-center gap-4">
+      <div className="flex w-64 items-center gap-4">
         <div className="flex items-center gap-3">
           <img
             src="/logo.png"
@@ -35,12 +35,12 @@ function Header() {
         </div>
       </div>
 
-      <div className="flex flex-1 justify-center px-8">
+      <div className="justify-left flex flex-1 px-8">
         <div
           className={`flex w-full max-w-[720px] items-center rounded-lg transition-all ${
             searchFocused
               ? "bg-white shadow-[0_1px_1px_0_rgba(65,69,73,0.3),0_1px_3px_1px_rgba(65,69,73,0.15)]"
-              : "bg-[#f1f3f4]"
+              : ""
           }`}
         >
           {isAuthenticated && <Search />}

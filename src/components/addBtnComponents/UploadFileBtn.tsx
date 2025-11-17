@@ -27,7 +27,6 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
   return (
     <div className="relative w-full">
       <div className="flex items-center">
-        {/* Upload Button */}
         <button
           onClick={() => fileInputRef.current?.click()}
           className="relative flex flex-1 items-center space-x-3 px-4 py-1.5 hover:bg-darkC"
@@ -36,7 +35,6 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
           <span>File upload</span>
         </button>
 
-        {/* Folder Selector */}
         <button
           onClick={() => setShowFolderDropdown(!showFolderDropdown)}
           className="flex items-center gap-1 px-3 py-1.5 hover:bg-darkC"
@@ -47,7 +45,6 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
         </button>
       </div>
 
-      {/* Folder Dropdown */}
       {showFolderDropdown && (
         <>
           <div
@@ -71,6 +68,7 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
                   setSelectedFolder(folder.id);
                   setShowFolderDropdown(false);
                 }}
+                onMouseEnter={() => console.log("Mouse entered Root button")}
                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
               >
                 {folder.name}
@@ -80,7 +78,6 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
         </>
       )}
 
-      {/* Hidden File Input */}
       <input
         ref={fileInputRef}
         type="file"

@@ -114,25 +114,41 @@ function SideMenu() {
   ];
 
   const handleUploadFile = async (
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement> | FileList,
     selectedFolderId?: string,
   ) => {
-    const files = e.target.files || [];
+    console.log("handleUploadFile called");
+    console.log("Event/FileList:", e);
+    console.log("Selected folder ID:", selectedFolderId);
+
+    const files = e instanceof FileList ? e : e.target.files || [];
+
+    console.log("Files to upload:", files);
+    console.log("Number of files:", files.length);
 
     for (let i = 0; i < files.length; i++) {
-      const file = files?.[i];
-      if (!file) return;
+      const file = files[i];
+      if (!file) {
+        console.log(`Skipping file at index ${i} - file is null/undefined`);
+        continue; // ✅ Changed from 'return' to 'continue'
+      }
 
+      console.log(`Processing file ${i + 1}/${files.length}:`, file.name);
       setFileName((prev) => [...prev, file.name]);
 
       try {
         const targetFolderId = selectedFolderId || (Folder?.[1] as string);
+        console.log("Uploading to folder:", targetFolderId);
+
         await uploadFile(file, setProgress, targetFolderId);
+        console.log(`Successfully uploaded: ${file.name}`);
       } catch (error) {
         console.error("Upload error:", error);
         alert(`Failed to upload ${file.name}`);
       }
     }
+
+    console.log("handleUploadFile completed");
   };
 
   const handleUploadFolder = async () => {

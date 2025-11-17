@@ -11,7 +11,7 @@ import { MdOutlineUploadFile } from "react-icons/md";
 interface DropDownProps {
   setFolderToggle: (value: boolean) => void;
   uploadFile: (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement> | FileList,
     folderId?: string,
   ) => void;
   setIsDropDown: (value: boolean) => void;
@@ -38,19 +38,19 @@ function DropDown({
   const [showFolderSelector, setShowFolderSelector] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<FileList | null>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropDown(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     if (
+  //       dropdownRef.current &&
+  //       !dropdownRef.current.contains(event.target as Node)
+  //     ) {
+  //       setIsDropDown(false);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setIsDropDown]);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => document.removeEventListener("mousedown", handleClickOutside);
+  // }, [setIsDropDown]);
 
   const handleNewFolder = () => {
     setFolderToggle(true);
@@ -65,7 +65,14 @@ function DropDown({
     folderInputRef.current?.click();
   };
 
+  useEffect(() => {
+    console.log("showFolderSelector changed to:", showFolderSelector);
+    console.log("pendingFiles count:", pendingFiles?.length);
+  }, [showFolderSelector, pendingFiles]);
+
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("File input changed!");
+    console.log("Files:", e.target.files);
     if (e.target.files && e.target.files.length > 0) {
       setPendingFiles(e.target.files);
       setShowFolderSelector(true);
@@ -73,19 +80,19 @@ function DropDown({
   };
 
   const handleFolderChoice = (folderId?: string) => {
-    if (pendingFiles) {
-      const syntheticEvent = {
-        target: {
-          files: pendingFiles,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
+    console.log("handleFolderChoice called");
+    console.log("Folder ID:", folderId);
+    console.log("Pending files:", pendingFiles);
 
-      uploadFile(syntheticEvent, folderId);
+    if (pendingFiles) {
+      console.log("Calling uploadFile with:", pendingFiles.length, "files");
+      uploadFile(pendingFiles, folderId);
       setPendingFiles(null);
       setShowFolderSelector(false);
       setIsDropDown(false);
-
       if (fileInputRef.current) fileInputRef.current.value = "";
+    } else {
+      console.log("No pending files to upload");
     }
   };
 
@@ -133,17 +140,19 @@ function DropDown({
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={() => setIsDropDown(false)}
-      ></div>
+      {!showFolderSelector && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setIsDropDown(false)}
+        ></div>
+      )}
 
       {/* Dropdown Menu */}
       <div
         ref={dropdownRef}
         className="animate-in fade-in slide-in-from-top-2 absolute left-3 top-20 z-50 w-72
-        rounded-lg
-        bg-white py-2 shadow-[0_2px_6px_rgba(0,0,0,0.15),0_1px_2px_rgba(0,0,0,0.3)] duration-200"
+      rounded-lg
+      bg-white py-2 shadow-[0_2px_6px_rgba(0,0,0,0.15),0_1px_2px_rgba(0,0,0,0.3)] duration-200"
       >
         {menuItems.map((item, index) => (
           <div key={index}>
@@ -165,7 +174,7 @@ function DropDown({
       </div>
 
       {showFolderSelector && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
           <div className="w-96 rounded-lg bg-white p-6 shadow-xl">
             <h3 className="mb-4 text-lg font-semibold text-[#202124]">
               Choose destination folder
@@ -177,7 +186,13 @@ function DropDown({
 
             <div className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
               <button
-                onClick={() => handleFolderChoice(undefined)}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Root folder clicked");
+                  handleFolderChoice(undefined);
+                }}
                 className="w-full rounded px-4 py-2 text-left transition-colors hover:bg-[#f1f3f4]"
               >
                 <div className="flex items-center gap-3">
@@ -190,10 +205,24 @@ function DropDown({
                 folders.map((folder) => (
                   <button
                     key={folder.id}
-                    onClick={() => handleFolderChoice(folder.id)}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Folder clicked:", folder.id, folder.name);
+                      handleFolderChoice(folder.id);
+                    }}
                     className="w-full rounded px-4 py-2 text-left transition-colors hover:bg-[#f1f3f4]"
                   >
-                    <div className="flex items-center gap-3">
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("Folder clicked:", folder.id, folder.name);
+                        handleFolderChoice(folder.id);
+                      }}
+                      className="flex items-center gap-3"
+                    >
                       <BsFolder2 className="h-5 w-5 text-[#5f6368]" />
                       <span className="text-sm">{folder.name}</span>
                     </div>
