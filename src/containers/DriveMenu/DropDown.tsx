@@ -67,7 +67,6 @@ function DropDown({
       setShowFolderSelector(false);
       setIsDropDown(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
-    } else {
     }
   };
 
@@ -229,7 +228,7 @@ function DropDown({
       <input
         ref={folderInputRef}
         type="file"
-        // @ts-ignore - webkitdirectory is not in the types
+        // @ts-expect-error - webkitdirectory is not in the types
         webkitdirectory="true"
         directory="true"
         multiple

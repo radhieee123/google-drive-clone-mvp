@@ -31,7 +31,7 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const { password: _, ...userWithoutPassword } = user;
+    const { ...userWithoutPassword } = user;
 
     return res.status(200).json({
       user: userWithoutPassword,

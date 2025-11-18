@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { logScroll, logNavigation, logCustom } from "./index";
+import { logNavigation, logCustom } from "./index";
 
 export function usePageTracking() {
   const router = useRouter();

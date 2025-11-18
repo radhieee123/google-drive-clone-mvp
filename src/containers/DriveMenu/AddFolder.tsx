@@ -3,7 +3,7 @@ import React from "react";
 interface folderToggleProps {
   setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
   setFolderName: React.Dispatch<React.SetStateAction<string>>;
-  uploadFolder: Function;
+  uploadFolder: () => void;
 }
 
 function AddFolder({

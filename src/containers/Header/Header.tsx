@@ -6,7 +6,7 @@ import Search from "./Search";
 import UserInfo from "./UserInfo";
 
 function Header() {
-  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchFocused] = useState(false);
   const [displayUserInfo, setDisplayUserInfo] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
