@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import Header from "./headerComponents/Header";
-import SideMenu from "./SideMenu";
+import Header from "../containers/Header";
+import { DriveMenu } from "../containers/DriveMenu";
 import { useAuth } from "@/hooks/useAuth";
 
 interface LayoutProps {
@@ -19,7 +19,7 @@ function Layout({ children }: LayoutProps) {
       <Header />
 
       <div className="flex flex-1 overflow-hidden">
-        <SideMenu />
+        <DriveMenu />
 
         <main className="flex-1 overflow-auto bg-white">{children}</main>
       </div>

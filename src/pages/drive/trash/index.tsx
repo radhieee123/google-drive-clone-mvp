@@ -1,12 +1,12 @@
 import Head from "next/head";
-import GetFiles from "@/components/GetFiles";
-import GetFolders from "@/components/GetFolders";
+import GetFiles from "@/containers/DriveContent/GetFiles";
+import GetFolders from "@/containers/DriveContent/GetFolders";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
-import { getFiles } from "@/lib/api-client";
+import { getFiles } from "@/services/drive-service";
 import { DotLoader } from "react-spinners";
 
 export default function Trash() {

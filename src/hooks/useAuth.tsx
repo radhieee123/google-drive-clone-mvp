@@ -1,21 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { trackedLocalStorage } from "@/lib/logger/storage";
-import { logCustom } from "@/lib/logger";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  image?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  isLoading: boolean;
-}
+import { trackedLocalStorage } from "@/utils/logger/storage";
+import { logCustom } from "@/utils/logger";
+import { User, AuthContextType } from "../types/user";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

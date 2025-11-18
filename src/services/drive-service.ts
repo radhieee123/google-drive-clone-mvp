@@ -1,5 +1,5 @@
-import { logCustom } from "./logger";
-import { trackedLocalStorage } from "./logger/storage";
+import { logCustom } from "../utils/logger";
+import { trackedLocalStorage } from "../utils/logger/storage";
 
 const API_BASE = "/api";
 

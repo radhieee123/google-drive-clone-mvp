@@ -3,10 +3,10 @@ import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
-import { getFiles } from "@/lib/api-client";
-import FileDropDown from "./FileDropDown";
-import Rename from "./Rename";
-import { logClick } from "@/lib/logger";
+import { getFiles } from "@/services/drive-service";
+import FileDropDown from "../../components/FileDropDown";
+import Rename from "../../components/Rename";
+import { logClick } from "@/utils/logger";
 
 interface GetFoldersProps {
   folderId: string;

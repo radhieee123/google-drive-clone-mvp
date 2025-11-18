@@ -1,9 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
-import fileIcons from "../FileIcons";
+import fileIcons from "../../components/FileIcons";
 import { useRouter } from "next/router";
-import { getFiles } from "@/lib/api-client";
+import { getFiles } from "@/services/drive-service";
 
 function Search() {
   const [searchText, setSearchText] = useState<string>("");

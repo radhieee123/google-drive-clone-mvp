@@ -1,4 +1,9 @@
-import type { Log, LogEventInput, ActionType, LogPayload } from "./types";
+import type {
+  Log,
+  LogEventInput,
+  ActionType,
+  LogPayload,
+} from "../../types/logger";
 
 const LOGGING_ENDPOINT = "/api/_synthetic/log_event";
 const SESSION_ID_KEY = "synthetic_log_session_id";

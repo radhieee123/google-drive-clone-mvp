@@ -11,15 +11,14 @@ import { TbDownload } from "react-icons/tb";
 import {
   deleteFile,
   deleteFolder,
-  renameFile,
-  renameFolder,
   starFile,
   starFolder,
   trashFile,
   trashFolder,
-} from "@/lib/api-client";
+} from "@/services/drive-service";
 import { useRouter } from "next/router";
-import { logClick } from "@/lib/logger";
+import { logClick } from "@/utils/logger";
+import { FILE_MENU_LABELS } from "../constants";
 
 interface FileDropDownProps {
   file: {
@@ -188,7 +187,7 @@ function FileDropDown({
           >
             <HiOutlineArrowsExpand className="h-5 w-5" />
             <span className="text-sm">
-              Open {isFolderComp ? "Folder" : "File"}
+              {FILE_MENU_LABELS.OPEN} {isFolderComp ? "Folder" : "File"}
             </span>
           </div>
           {!isFolderComp && (
@@ -199,7 +198,7 @@ function FileDropDown({
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <TbDownload className="h-5 w-5" />
-              <span className="text-sm">Download</span>
+              <span className="text-sm"> {FILE_MENU_LABELS.DOWNLOAD}</span>
             </a>
           )}
 
@@ -208,7 +207,7 @@ function FileDropDown({
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <MdDriveFileRenameOutline className="h-5 w-5" />
-            <span className="text-sm">Rename</span>
+            <span className="text-sm">{FILE_MENU_LABELS.RENAME}</span>
           </div>
           <div
             onClick={handleStar}
@@ -228,7 +227,7 @@ function FileDropDown({
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <RiDeleteBin6Line className="h-5 w-5" />
-            <span className="text-sm">Move to bin</span>
+            <span className="text-sm">{FILE_MENU_LABELS.MOVE_TO_TRASH}</span>
           </div>
         </>
       ) : (
@@ -238,14 +237,14 @@ function FileDropDown({
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <MdOutlineRestore className="h-5 w-5" />
-            <span className="text-sm">Restore</span>
+            <span className="text-sm">{FILE_MENU_LABELS.RESTORE}</span>
           </div>
           <div
             onClick={handleDelete}
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <RiDeleteBin6Line className="h-5 w-5" />
-            <span className="text-sm">Delete forever</span>
+            <span className="text-sm">{FILE_MENU_LABELS.DELETE_FOREVER}</span>
           </div>
         </>
       )}

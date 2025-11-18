@@ -13,7 +13,7 @@ import {
   getFolderById,
   getFolderPath,
   getAllFolders,
-} from "./api-client";
+} from "./drive-service";
 
 global.fetch = jest.fn();
 

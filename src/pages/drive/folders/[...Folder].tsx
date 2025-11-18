@@ -1,17 +1,21 @@
 import React from "react";
 import { useRouter } from "next/router";
-import GetFolders from "@/components/GetFolders";
-import GetFiles from "@/components/GetFiles";
+import GetFolders from "@/containers/DriveContent/GetFolders";
+import GetFiles from "@/containers/DriveContent/GetFiles";
 import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
-import { getFiles, getFolderById, getFolderPath } from "@/lib/api-client";
+import {
+  getFiles,
+  getFolderById,
+  getFolderPath,
+} from "@/services/drive-service";
 import { DotLoader } from "react-spinners";
-import { logCustom } from "@/lib/logger";
-import { useComponentTracking } from "@/lib/logger/hooks";
+import { logCustom } from "@/utils/logger";
+import { useComponentTracking } from "@/utils/logger/hooks";
 
 interface BreadcrumbItem {
   id: string;

@@ -38,20 +38,6 @@ function DropDown({
   const [showFolderSelector, setShowFolderSelector] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<FileList | null>(null);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     if (
-  //       dropdownRef.current &&
-  //       !dropdownRef.current.contains(event.target as Node)
-  //     ) {
-  //       setIsDropDown(false);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => document.removeEventListener("mousedown", handleClickOutside);
-  // }, [setIsDropDown]);
-
   const handleNewFolder = () => {
     setFolderToggle(true);
     setIsDropDown(false);

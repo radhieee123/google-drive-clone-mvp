@@ -2,30 +2,6 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { logScroll, logNavigation, logCustom } from "./index";
 
-export function useScrollTracking(throttleMs: number = 1000) {
-  const lastScrollTime = useRef(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const now = Date.now();
-
-      if (now - lastScrollTime.current < throttleMs) {
-        return;
-      }
-
-      lastScrollTime.current = now;
-
-      logScroll("User scrolled page", window.scrollX, window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [throttleMs]);
-}
-
 export function usePageTracking() {
   const router = useRouter();
   const previousUrl = useRef<string>("");

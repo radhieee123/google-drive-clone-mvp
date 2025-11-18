@@ -1,4 +1,4 @@
-import { addFile } from "./api-client";
+import { addFile } from "../../services/drive-service";
 
 export const uploadFile = async (
   file: File,

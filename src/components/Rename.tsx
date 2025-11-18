@@ -1,4 +1,5 @@
-import { renameFile, renameFolder } from "@/lib/api-client";
+import { ACTION, FILE_MENU_LABELS } from "@/constants";
+import { renameFile, renameFolder } from "@/services/drive-service";
 import React, { useState } from "react";
 
 interface renameProps {
@@ -46,7 +47,7 @@ function Rename({
 
   return (
     <div className="absolute top-9 z-10 space-y-2 rounded-xl bg-white p-3 shadow-lg shadow-[#bbb]">
-      <h2 className="text-xl">Rename</h2>
+      <h2 className="text-xl">{FILE_MENU_LABELS.RENAME}</h2>
       <input
         className="w-full rounded-md border border-textC py-1.5 indent-2 outline-textC2"
         type="text"
@@ -62,7 +63,7 @@ function Rename({
           className="rounded-full px-3 py-2 hover:bg-darkC2"
           disabled={isLoading}
         >
-          Cancel
+          {ACTION.CANCEL}
         </button>
         <button
           onClick={() => rename()}

@@ -3,10 +3,10 @@ import Image from "next/image";
 import fileIcons from "@/components/FileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useAuth } from "@/hooks/useAuth";
-import FileDropDown from "./FileDropDown";
-import { getFiles } from "@/lib/api-client";
-import Rename from "./Rename";
-import { logClick } from "@/lib/logger";
+import FileDropDown from "../../components/FileDropDown";
+import { getFiles } from "@/services/drive-service";
+import Rename from "../../components/Rename";
+import { logClick } from "@/utils/logger";
 
 interface GetFilesProps {
   folderId: string;

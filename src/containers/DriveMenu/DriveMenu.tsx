@@ -1,19 +1,11 @@
 "use client";
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
-import {
-  AiOutlineClockCircle,
-  AiOutlineStar,
-  AiOutlineDelete,
-  AiOutlineCloudUpload,
-} from "react-icons/ai";
-import { BsFolder2, BsPeople, BsLaptop, BsInfoCircle } from "react-icons/bs";
-import { IoMdClose } from "react-icons/io";
-import DropDown from "./addBtnComponents/DropDown";
-import AddFolder from "./addBtnComponents/AddFolder";
-import { uploadFile } from "../lib/fileUpload";
-import ProgressIndicator from "./ProgressIndicator";
-import { addFolder } from "@/lib/api-client";
+import DropDown from "./DropDown";
+import AddFolder from "./AddFolder";
+import { uploadFile } from "../../services/file-upload-service";
+import ProgressIndicator from "../../components/ProgressIndicator";
+import { addFolder } from "@/services/drive-service";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
 
@@ -28,7 +20,7 @@ interface Folder {
   folderName: string;
 }
 
-function SideMenu() {
+function DriveMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
   const [progress, setProgress] = useState([]);
   const [fileName, setFileName] = useState<string[]>([]);
@@ -306,4 +298,4 @@ function SideMenu() {
   );
 }
 
-export default SideMenu;
+export default DriveMenu;
