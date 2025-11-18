@@ -15,7 +15,7 @@ import {
 } from "@/services/drive-service";
 import { DotLoader } from "react-spinners";
 import { logCustom } from "@/utils/logger";
-import { useComponentTracking } from "@/utils/logger/hooks";
+import { useComponentTracking } from "@/hooks/useComponentTracking";
 
 interface BreadcrumbItem {
   id: string;

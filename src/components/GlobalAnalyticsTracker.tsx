@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { usePageTracking } from "../utils/logger/hooks";
+import { usePageTracking } from "../hooks/usePageTracking";
 import useScrollTracking from "../hooks/useScrollTracking";
 
 export default function GlobalAnalyticsTracker() {
