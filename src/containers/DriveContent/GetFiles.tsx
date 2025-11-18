@@ -60,8 +60,8 @@ function GetFiles({ folderId, select }: GetFilesProps) {
 
   const list = fileList.map((file) => {
     const icon =
-      fileIcons[file.fileExtension as keyof typeof fileIcons] ??
-      fileIcons["any"];
+      FileIcons[file.fileExtension as keyof typeof FileIcons] ??
+      FileIcons["any"];
 
     const img = ["jpg", "ico", "webp", "png", "jpeg", "gif", "jfif"].includes(
       file.fileExtension,
