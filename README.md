@@ -2,6 +2,8 @@
 
 A single-user file management application with hierarchical folder structure, mimicking basic cloud storage navigation capabilities.
 
+Project Deployed: https://google-drive-clone-mvp.vercel.app/drive/my-drive
+
 ## 🎯 Project Overview
 
 Drive MVP is a functional file management system that allows users to organize files in a nested folder hierarchy with full CRUD operations. The application provides an intuitive interface for managing files and folders, complete with breadcrumb navigation and contextual actions.
