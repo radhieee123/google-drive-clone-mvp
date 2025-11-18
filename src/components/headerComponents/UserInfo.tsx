@@ -5,6 +5,10 @@ import { AiOutlineClose } from "react-icons/ai";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 
+interface UserInfoProps {
+  setDisplayUserInfo: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
   const { user, logout } = useAuth();
 

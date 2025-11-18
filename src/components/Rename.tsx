@@ -1,6 +1,14 @@
 import { renameFile, renameFolder } from "@/lib/api-client";
 import React, { useState } from "react";
 
+interface renameProps {
+  fileExtension: string;
+  fileName: string;
+  fileId: string;
+  isFolder: boolean;
+  setRenameToggle: React.Dispatch<React.SetStateAction<string>>;
+}
+
 function Rename({
   setRenameToggle,
   fileId,

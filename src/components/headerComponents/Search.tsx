@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
-import fileIcons from "../fileIcons";
+import fileIcons from "../FileIcons";
 import { useRouter } from "next/router";
 import { getFiles } from "@/lib/api-client";
 

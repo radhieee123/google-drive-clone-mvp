@@ -21,6 +21,25 @@ import {
 import { useRouter } from "next/router";
 import { logClick } from "@/lib/logger";
 
+interface FileDropDownProps {
+  file: {
+    folderName: string;
+    isFolder: boolean;
+    isStarred: boolean;
+    isTrashed: boolean;
+    id: string;
+    fileLink: string;
+    fileName: string;
+    fileExtension: string;
+    folderId: string;
+  };
+  folderId: string;
+  isFolderComp: boolean;
+  select: string;
+  setOpenMenu: React.Dispatch<React.SetStateAction<string>>;
+  setRenameToggle: React.Dispatch<React.SetStateAction<string>>;
+}
+
 function FileDropDown({
   file,
   setOpenMenu,

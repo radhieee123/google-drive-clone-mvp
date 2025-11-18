@@ -6,7 +6,13 @@ import {
   IoIosArrowUp,
   IoMdCheckmarkCircle,
 } from "react-icons/io";
-import fileIcons from "./fileIcons";
+import fileIcons from "./FileIcons";
+
+interface ProgressIndicatorProps {
+  progress: number[];
+  fileName: string[];
+  setFileName: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
 function ProgressIndicator({
   progress,

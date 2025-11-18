@@ -1,5 +1,11 @@
 import React from "react";
 
+interface folderToggleProps {
+  setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
+  setFolderName: React.Dispatch<React.SetStateAction<string>>;
+  uploadFolder: Function;
+}
+
 function AddFolder({
   setFolderToggle,
   setFolderName,
