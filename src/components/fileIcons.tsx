@@ -11,7 +11,7 @@ interface FileIcons {
   [key: string]: React.ReactNode;
 }
 
-const fileIcons: FileIcons = {
+const FileIcons: FileIcons = {
   mp4: <MdMovie className="h-full w-full text-[#CA2E24]" />,
   mp3: <IoMdHeadset className="h-full w-full text-[#CA2E24]" />,
   pdf: <MdPictureAsPdf className="h-full w-full text-[#CA2E24]" />,
@@ -29,4 +29,4 @@ const fileIcons: FileIcons = {
   any: <AiFillFile className="h-full w-full text-textC" />,
 };
 
-export default fileIcons;
+export default FileIcons;
