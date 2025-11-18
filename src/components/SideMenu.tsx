@@ -68,8 +68,15 @@ function SideMenu() {
   const navItems: NavItem[] = [
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+        <svg
+          className=" c-qd"
+          width="20px"
+          height="20px"
+          viewBox="0 0 24 24"
+          fill="#000000"
+          focusable="false"
+        >
+          <path d="M9.05 15H15q.275 0 .5-.137.225-.138.35-.363l1.1-1.9q.125-.225.1-.5-.025-.275-.15-.5l-2.95-5.1q-.125-.225-.35-.363Q13.375 6 13.1 6h-2.2q-.275 0-.5.137-.225.138-.35.363L7.1 11.6q-.125.225-.125.5t.125.5l1.05 1.9q.125.25.375.375T9.05 15Zm1.2-3L12 9l1.75 3ZM3 17V4q0-.825.587-1.413Q4.175 2 5 2h14q.825 0 1.413.587Q21 3.175 21 4v13Zm2 5q-.825 0-1.413-.587Q3 20.825 3 20v-1h18v1q0 .825-.587 1.413Q19.825 22 19 22Z"></path>
         </svg>
       ),
       label: "My Drive",
@@ -77,8 +84,14 @@ function SideMenu() {
     },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="#1f1f1f"
+        >
+          <path d="M40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm720 0v-120q0-44-24.5-84.5T666-434q51 6 96 20.5t84 35.5q36 20 55 44.5t19 53.5v120H760ZM360-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm400-160q0 66-47 113t-113 47q-11 0-28-2.5t-28-5.5q27-32 41.5-71t14.5-81q0-42-14.5-81T544-792q14-5 28-6.5t28-1.5q66 0 113 47t47 113ZM120-240h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0 320Zm0-400Z" />
         </svg>
       ),
       label: "Shared with me",
@@ -86,8 +99,14 @@ function SideMenu() {
     },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="#1f1f1f"
+        >
+          <path d="m614-310 51-51-149-149v-210h-72v240l170 170ZM480-96q-79.38 0-149.19-30T208.5-208.5Q156-261 126-330.96t-30-149.5Q96-560 126-630q30-70 82.5-122t122.46-82q69.96-30 149.5-30t149.55 30.24q70 30.24 121.79 82.08 51.78 51.84 81.99 121.92Q864-559.68 864-480q0 79.38-30 149.19T752-208.5Q700-156 629.87-126T480-96Zm0-384Zm.48 312q129.47 0 220.5-91.5Q792-351 792-480.48q0-129.47-91.02-220.5Q609.95-792 480.48-792 351-792 259.5-700.98 168-609.95 168-480.48 168-351 259.5-259.5T480.48-168Z" />
         </svg>
       ),
       label: "Recent",
@@ -95,8 +114,14 @@ function SideMenu() {
     },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="20px"
+          viewBox="0 -960 960 960"
+          width="20px"
+          fill="#1f1f1f"
+        >
+          <path d="m352-293 128-76 129 76-34-144 111-95-147-13-59-137-59 137-147 13 112 95-34 144ZM243-144l63-266L96-589l276-24 108-251 108 252 276 23-210 179 63 266-237-141-237 141Zm237-333Z" />
         </svg>
       ),
       label: "Starred",
@@ -117,38 +142,24 @@ function SideMenu() {
     e: ChangeEvent<HTMLInputElement> | FileList,
     selectedFolderId?: string,
   ) => {
-    console.log("handleUploadFile called");
-    console.log("Event/FileList:", e);
-    console.log("Selected folder ID:", selectedFolderId);
-
     const files = e instanceof FileList ? e : e.target.files || [];
-
-    console.log("Files to upload:", files);
-    console.log("Number of files:", files.length);
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (!file) {
-        console.log(`Skipping file at index ${i} - file is null/undefined`);
-        continue; // ✅ Changed from 'return' to 'continue'
+        continue;
       }
-
-      console.log(`Processing file ${i + 1}/${files.length}:`, file.name);
       setFileName((prev) => [...prev, file.name]);
 
       try {
         const targetFolderId = selectedFolderId || (Folder?.[1] as string);
-        console.log("Uploading to folder:", targetFolderId);
 
         await uploadFile(file, setProgress, targetFolderId);
-        console.log(`Successfully uploaded: ${file.name}`);
       } catch (error) {
         console.error("Upload error:", error);
         alert(`Failed to upload ${file.name}`);
       }
     }
-
-    console.log("handleUploadFile completed");
   };
 
   const handleUploadFolder = async () => {
@@ -171,7 +182,7 @@ function SideMenu() {
   const storagePercentage = (storageUsed / storageTotal) * 100;
 
   return (
-    <aside className="flex h-screen w-64 flex-col bg-white">
+    <aside className="flex h-screen w-64 flex-col bg-[#f9fafd]">
       <div className="p-3">
         <button
           onClick={() => setIsDropDown(true)}
@@ -210,7 +221,7 @@ function SideMenu() {
         />
       )}
 
-      <nav className="flex-1 px-3 py-2">
+      <nav className="px-3 py-2">
         <div className="space-y-1">
           {navItems.map((item, index) => {
             const isActive = router.pathname === item.path;
@@ -220,24 +231,24 @@ function SideMenu() {
                 key={index}
                 onClick={() => router.push(item.path)}
                 className={`
-                  group flex w-full items-center gap-5 rounded-r-full px-5 py-2
-                  transition-colors duration-200
-                  ${
-                    isActive
-                      ? "bg-[#c2e7ff] text-[#041e49]"
-                      : "text-[#5f6368] hover:bg-[#f1f3f4]"
-                  }
-                `}
+            group flex w-full items-center gap-5 rounded-r-full px-5 py-2
+            transition-colors duration-200
+            ${
+              isActive
+                ? "bg-[#c2e7ff] text-[#041e49]"
+                : "text-[#5f6368] hover:bg-[#f1f3f4]"
+            }
+          `}
               >
                 <div
                   className={`
-                    flex items-center justify-center
-                    ${
-                      isActive
-                        ? "text-[#041e49]"
-                        : "text-[#5f6368] group-hover:text-[#202124]"
-                    }
-                  `}
+              flex items-center justify-center
+              ${
+                isActive
+                  ? "text-[#041e49]"
+                  : "text-[#5f6368] group-hover:text-[#202124]"
+              }
+            `}
                 >
                   {item.icon}
                 </div>
@@ -254,9 +265,12 @@ function SideMenu() {
         </div>
       </nav>
 
-      <div className="mx-6 border-t border-[#e8eaed]"></div>
+      <div
+        className="mx-6 border-t border-[#e8eaed]"
+        style={{ marginTop: "2rem", paddingTop: "1rem" }}
+      ></div>
 
-      <div className="space-y-3 px-6 py-4">
+      <div className="space-y-3 px-6">
         <div className="flex items-center gap-2">
           <svg
             className="h-5 w-5 text-[#5f6368]"

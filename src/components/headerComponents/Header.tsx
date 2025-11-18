@@ -21,8 +21,8 @@ function Header() {
   const { user, isAuthenticated } = useMockAuth();
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-[#e8eaed] bg-white px-4">
-      <div className="flex w-64 items-center gap-4">
+    <header className="flex h-16 items-center justify-between bg-[#f9fafd] px-4">
+      <div className="flex w-[16%] items-center gap-4">
         <div className="flex items-center gap-3">
           <img
             src="/logo.png"
@@ -35,7 +35,7 @@ function Header() {
         </div>
       </div>
 
-      <div className="justify-left flex flex-1 px-8">
+      <div className="justify-left flex flex-1">
         <div
           className={`flex w-full max-w-[720px] items-center rounded-lg transition-all ${
             searchFocused

@@ -65,14 +65,9 @@ function DropDown({
     folderInputRef.current?.click();
   };
 
-  useEffect(() => {
-    console.log("showFolderSelector changed to:", showFolderSelector);
-    console.log("pendingFiles count:", pendingFiles?.length);
-  }, [showFolderSelector, pendingFiles]);
+  useEffect(() => {}, [showFolderSelector, pendingFiles]);
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("File input changed!");
-    console.log("Files:", e.target.files);
     if (e.target.files && e.target.files.length > 0) {
       setPendingFiles(e.target.files);
       setShowFolderSelector(true);
@@ -80,19 +75,13 @@ function DropDown({
   };
 
   const handleFolderChoice = (folderId?: string) => {
-    console.log("handleFolderChoice called");
-    console.log("Folder ID:", folderId);
-    console.log("Pending files:", pendingFiles);
-
     if (pendingFiles) {
-      console.log("Calling uploadFile with:", pendingFiles.length, "files");
       uploadFile(pendingFiles, folderId);
       setPendingFiles(null);
       setShowFolderSelector(false);
       setIsDropDown(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } else {
-      console.log("No pending files to upload");
     }
   };
 
@@ -190,7 +179,6 @@ function DropDown({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Root folder clicked");
                   handleFolderChoice(undefined);
                 }}
                 className="w-full rounded px-4 py-2 text-left transition-colors hover:bg-[#f1f3f4]"
@@ -209,7 +197,6 @@ function DropDown({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log("Folder clicked:", folder.id, folder.name);
                       handleFolderChoice(folder.id);
                     }}
                     className="w-full rounded px-4 py-2 text-left transition-colors hover:bg-[#f1f3f4]"
@@ -218,7 +205,6 @@ function DropDown({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log("Folder clicked:", folder.id, folder.name);
                         handleFolderChoice(folder.id);
                       }}
                       className="flex items-center gap-3"

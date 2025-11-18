@@ -68,7 +68,6 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
                   setSelectedFolder(folder.id);
                   setShowFolderDropdown(false);
                 }}
-                onMouseEnter={() => console.log("Mouse entered Root button")}
                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
               >
                 {folder.name}

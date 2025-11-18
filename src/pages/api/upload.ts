@@ -18,9 +18,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log("=== Upload API Called ===");
-  console.log("isVercel:", isVercel);
-
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -33,8 +30,6 @@ export default async function handler(
 
   try {
     if (isVercel) {
-      console.log("=== Using Vercel Blob Storage ===");
-
       const { put } = await import("@vercel/blob");
 
       const form = formidable({
@@ -71,8 +66,6 @@ export default async function handler(
         },
       );
 
-      console.log("Uploaded to Blob:", blob.url);
-
       return res.status(200).json({
         fileName: originalName,
         fileLink: blob.url,
@@ -80,8 +73,6 @@ export default async function handler(
         fileExtension: extension.replace(".", ""),
       });
     } else {
-      console.log("=== Using Local File System ===");
-
       const uploadDir = path.join(process.cwd(), "public", "uploads");
 
       try {
