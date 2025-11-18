@@ -12,7 +12,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("mockUser");
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const userData = await response.json();
       setUser(userData.user);
-      localStorage.setItem("mockUser", JSON.stringify(userData.user));
+      localStorage.setItem("user", JSON.stringify(userData.user));
       trackedLocalStorage.setItem("key", "value");
 
       logCustom(`User logged in: ${email}`, "USER_LOGIN", {
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("mockUser");
+    localStorage.removeItem("user");
   };
 
   return (
