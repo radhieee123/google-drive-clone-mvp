@@ -1,4 +1,5 @@
 "use client";
+import { ACTION, DROPDOWN } from "@/constants";
 import React, { useRef, useEffect, useState } from "react";
 import { BsFolder2, BsFolderPlus } from "react-icons/bs";
 import {
@@ -151,11 +152,11 @@ function DropDown({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
           <div className="w-96 rounded-lg bg-white p-6 shadow-xl">
             <h3 className="mb-4 text-lg font-semibold text-[#202124]">
-              Choose destination folder
+              {DROPDOWN.CHOOSE_DESTINATION_FOLDER}
             </h3>
 
             <p className="mb-4 text-sm text-[#5f6368]">
-              {pendingFiles?.length} file(s) selected
+              {pendingFiles?.length} {DROPDOWN.FILES_SELECTED}
             </p>
 
             <div className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
@@ -170,7 +171,9 @@ function DropDown({
               >
                 <div className="flex items-center gap-3">
                   <BsFolder2 className="h-5 w-5 text-[#5f6368]" />
-                  <span className="text-sm font-medium">My Drive (Root)</span>
+                  <span className="text-sm font-medium">
+                    {DROPDOWN.ROOT_FOLDER}
+                  </span>
                 </div>
               </button>
 
@@ -201,7 +204,7 @@ function DropDown({
                 ))
               ) : (
                 <p className="px-4 py-2 text-sm text-[#5f6368]">
-                  No folders available
+                  {DROPDOWN.NO_FOLDER_AVAILABLE}
                 </p>
               )}
             </div>
@@ -211,7 +214,7 @@ function DropDown({
                 onClick={handleCancelFolderSelection}
                 className="rounded px-4 py-2 text-sm text-[#5f6368] hover:bg-[#f1f3f4]"
               >
-                Cancel
+                {ACTION.CANCEL}
               </button>
             </div>
           </div>

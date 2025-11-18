@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { MdUploadFile } from "react-icons/md";
 import { BsFolder2, BsChevronDown } from "react-icons/bs";
+import { UPLOAD_FILE } from "@/constants";
 
 interface UploadFileBtnProps {
   uploadFile: (
@@ -32,7 +33,7 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
           className="relative flex flex-1 items-center space-x-3 px-4 py-1.5 hover:bg-darkC"
         >
           <MdUploadFile className="h-5 w-5" />
-          <span>File upload</span>
+          <span>{UPLOAD_FILE.UPLOAD_FILE}</span>
         </button>
 
         <button
@@ -59,7 +60,7 @@ function UploadFileBtn({ uploadFile, folders = [] }: UploadFileBtnProps) {
               }}
               className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
             >
-              Root (My Drive)
+              {UPLOAD_FILE.ROOT_FOLDER}
             </button>
             {folders.map((folder) => (
               <button

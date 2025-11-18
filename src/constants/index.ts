@@ -31,3 +31,15 @@ export const LOGIN = {
   DEMO_EXAMPLE_PASSWORD: "Password: password",
   DEMO_EXAMPLE_DESC: "Or use demo accounts",
 };
+
+export const UPLOAD_FILE = {
+  UPLOAD_FILE: "File upload",
+  ROOT_FOLDER: "Root (My Drive)",
+};
+
+export const DROPDOWN = {
+  NO_FOLDER_AVAILABLE: "No folders available",
+  CHOOSE_DESTINATION_FOLDER: "Choose destination folder",
+  FILES_SELECTED: "file(s) selected",
+  ROOT_FOLDER: "My Drive (Root)",
+};
