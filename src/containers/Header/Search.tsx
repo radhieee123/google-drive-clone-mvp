@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
-import fileIcons from "../../components/FileIcons";
+import FileIcons from "../../components/FileIcons";
 import { useRouter } from "next/router";
 import { getFiles } from "@/services/drive-service";
 
@@ -54,8 +54,8 @@ function Search() {
     const isFolder = item.folderName !== undefined;
     const icon = isFolder
       ? null
-      : fileIcons[item.fileExtension as keyof typeof fileIcons] ??
-        fileIcons["any"];
+      : FileIcons[item.fileExtension as keyof typeof FileIcons] ??
+        FileIcons["any"];
 
     return (
       <div
