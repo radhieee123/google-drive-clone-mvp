@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
-import { useMockAuth } from "@/contexts/MockAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { getFiles } from "@/lib/api-client";
 import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";
@@ -18,7 +18,7 @@ function GetFolders({ folderId, select }: GetFoldersProps) {
   const [renameToggle, setRenameToggle] = useState("");
   const [folderList, setFolderList] = useState<any[]>([]);
 
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {

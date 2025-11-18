@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { trackedLocalStorage } from "@/lib/logger/storage";
 import { logCustom } from "@/lib/logger";
 
-interface MockUser {
+interface User {
   id: string;
   email: string;
   name: string;
@@ -10,7 +10,7 @@ interface MockUser {
 }
 
 interface AuthContextType {
-  user: MockUser | null;
+  user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -19,10 +19,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const MockAuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<MockUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -74,10 +74,10 @@ export const MockAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useMockAuth = () => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useMockAuth must be used within MockAuthProvider");
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };
