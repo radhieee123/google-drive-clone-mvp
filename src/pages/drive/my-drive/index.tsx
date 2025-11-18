@@ -4,7 +4,7 @@ import GetFolders from "@/components/GetFolders";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useMockAuth } from "@/contexts/MockAuthContext";
+import { useAuth } from "@/hooks/useAuthContext";
 import Login from "@/components/Login";
 import { getFiles } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
@@ -16,7 +16,7 @@ export default function Home() {
   const [files, setFiles] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
 
-  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
+  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
 
   const breadcrumbs = [
     {

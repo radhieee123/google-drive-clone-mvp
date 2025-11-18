@@ -1,14 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import { TbGridDots } from "react-icons/tb";
-import { useMockAuth } from "@/contexts/MockAuthContext";
+import { useAuth } from "@/hooks/useAuthContext";
 import Search from "./Search";
 import UserInfo from "./UserInfo";
 
 function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [displayUserInfo, setDisplayUserInfo] = useState(false);
-  const { user, isAuthenticated } = useMockAuth();
+  const { user, isAuthenticated } = useAuth();
 
   return (
     <header className="flex h-16 items-center justify-between bg-[#f9fafd] px-4">
