@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { PiSignOutBold } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 import { useAuth } from "@/hooks/useAuth";
@@ -22,7 +23,7 @@ function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
     shadow-md shadow-[#b4bebb]"
     >
       <button
-        onClick={() => setDisplayUserInfo((prev: boolean) => false)}
+        onClick={() => setDisplayUserInfo(false)}
         className="absolute right-3 top-3 rounded-full bg-darkC2 p-1 hover:bg-darkC"
       >
         <AiOutlineClose className="h-5 w-5 rounded-full stroke-2 text-textC" />
@@ -30,11 +31,13 @@ function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
       <p>{user?.email}</p>
       <div className="h-20 w-20 overflow-hidden rounded-full border">
         {user?.image ? (
-          <img
+          <Image
             src={user.image}
+            alt="avatar"
+            width={80}
+            height={80}
             className="h-full w-full object-cover"
             draggable={false}
-            alt="avatar"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-3xl font-bold text-white">

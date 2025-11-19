@@ -4,12 +4,13 @@ import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
 import FileIcons from "../../components/FileIcons";
 import { useRouter } from "next/router";
 import { getFiles } from "@/services/drive-service";
+import { DriveFile, DriveFolder } from "@/types/drive";
 
 function Search() {
   const [searchText, setSearchText] = useState<string>("");
   const [onFocus, setOnFocus] = useState<boolean>(false);
-  const [allFiles, setAllFiles] = useState<any[]>([]);
-  const [allFolders, setAllFolders] = useState<any[]>([]);
+  const [allFiles, setAllFiles] = useState<DriveFile[]>([]);
+  const [allFolders, setAllFolders] = useState<DriveFolder[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { user } = useAuth();
@@ -35,7 +36,7 @@ function Search() {
     window.open(fileLink, "_blank");
   };
 
-  const searchResults = [
+  const searchResults: (DriveFile | DriveFolder)[] = [
     ...allFiles.filter(
       (item) =>
         item.fileName?.toLowerCase().includes(searchText.toLowerCase()) &&
@@ -51,11 +52,12 @@ function Search() {
   ];
 
   const result = searchResults.map((item) => {
-    const isFolder = item.folderName !== undefined;
+    const isFolder = "folderName" in item;
     const icon = isFolder
       ? null
-      : FileIcons[item.fileExtension as keyof typeof FileIcons] ??
-        FileIcons["any"];
+      : FileIcons[
+          (item as DriveFile).fileExtension as keyof typeof FileIcons
+        ] ?? FileIcons["any"];
 
     return (
       <div
@@ -63,7 +65,7 @@ function Search() {
         onClick={() => {
           isFolder
             ? router.push("/drive/folders/" + item.id)
-            : openFile(item.fileLink);
+            : openFile((item as DriveFile).fileLink);
           setOnFocus(false);
           setSearchText("");
         }}
@@ -77,13 +79,15 @@ function Search() {
           )}
         </span>
         <span className="w-full truncate">
-          {item.fileName || item.folderName}
+          {isFolder
+            ? (item as DriveFolder).folderName
+            : (item as DriveFile).fileName}
         </span>
       </div>
     );
   });
 
-  const handleDocumentClick = (e: { target: any }) => {
+  const handleDocumentClick = (e: MouseEvent) => {
     if (
       inputRef.current &&
       e.target &&

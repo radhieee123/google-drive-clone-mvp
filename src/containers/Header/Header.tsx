@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import { TbGridDots } from "react-icons/tb";
 import { useAuth } from "@/hooks/useAuth";
 import Search from "./Search";
@@ -14,11 +15,14 @@ function Header() {
     <header className="flex h-16 items-center justify-between bg-[#f9fafd] px-4">
       <div className="flex w-[16%] items-center gap-4">
         <div className="flex items-center gap-3">
-          <img
+          <Image
             src="/logo.png"
             alt="Drive"
+            width={40}
+            height={40}
             className="h-10 w-10"
             draggable={false}
+            priority
           />
 
           <span className="text-[22px] text-[#5f6368]">Drive</span>
