@@ -6,7 +6,13 @@ import {
   IoIosArrowUp,
   IoMdCheckmarkCircle,
 } from "react-icons/io";
-import fileIcons from "./fileIcons";
+import FileIcons from "./FileIcons";
+
+interface ProgressIndicatorProps {
+  progress: number[];
+  fileName: string[];
+  setFileName: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
 function ProgressIndicator({
   progress,
@@ -23,10 +29,10 @@ function ProgressIndicator({
         className="flex cursor-pointer items-center justify-between bg-white py-2.5 pl-4 pr-2 hover:bg-darkC"
       >
         <div className="flex items-center space-x-3">
-          {fileExtension && fileIcons[fileExtension] ? (
-            <div className="h-6 w-6">{fileIcons[fileExtension]}</div>
+          {fileExtension && FileIcons[fileExtension] ? (
+            <div className="h-6 w-6">{FileIcons[fileExtension]}</div>
           ) : (
-            <div className="h-6 w-6">{fileIcons["any"]}</div>
+            <div className="h-6 w-6">{FileIcons["any"]}</div>
           )}
           <span className="w-60 truncate">{name}</span>
         </div>

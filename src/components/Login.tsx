@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
-import { logClick, logKeyPress, logCustom } from "@/lib/logger";
+import { logClick, logKeyPress, logCustom } from "@/utils/logger";
+import { LOGIN } from "../constants";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -97,7 +98,7 @@ function Login() {
             className="mx-auto"
           />
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
-            Google Drive Clone
+            {LOGIN.TITLE}
           </h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
         </div>
@@ -106,7 +107,7 @@ function Login() {
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
               <label htmlFor="email" className="sr-only">
-                Email address
+                {LOGIN.EMAIL_ADDRESS}
               </label>
               <input
                 id="email"
@@ -122,7 +123,7 @@ function Login() {
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                {LOGIN.PASSWORD}
               </label>
               <input
                 id="password"
@@ -160,7 +161,7 @@ function Login() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="bg-gray-50 px-2 text-gray-500">
-                Or use demo accounts
+                {LOGIN.DEMO_EXAMPLE_DESC}
               </span>
             </div>
           </div>
@@ -171,23 +172,23 @@ function Login() {
               onClick={() => quickLogin("demo@example.com", "password")}
               className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Demo User
+              {LOGIN.DEMO_USER}
             </button>
             <button
               type="button"
               onClick={() => quickLogin("test@example.com", "password")}
               className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Test User
+              {LOGIN.TEST_USER}
             </button>
           </div>
 
           <div className="mt-4 rounded-md bg-blue-50 p-4">
             <div className="text-sm text-blue-800">
-              <p className="font-medium">Demo Credentials:</p>
+              <p className="font-medium">{LOGIN.DEMO_CREDENTIALS}:</p>
               <ul className="mt-2 space-y-1 text-xs">
-                <li>• Email: demo@example.com</li>
-                <li>• Password: password</li>
+                <li>• {LOGIN.DEMO_EXAMPLE_EMAIL}</li>
+                <li>• {LOGIN.DEMO_EXAMPLE_PASSWORD}</li>
               </ul>
             </div>
           </div>

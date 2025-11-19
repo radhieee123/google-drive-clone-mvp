@@ -6,5 +6,7 @@ export default function Index() {
 
   useEffect(() => {
     router.push("/drive/my-drive");
-  }, []);
+  }, [router]);
+
+  return null;
 }

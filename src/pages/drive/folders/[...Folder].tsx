@@ -1,17 +1,21 @@
 import React from "react";
 import { useRouter } from "next/router";
-import GetFolders from "@/components/GetFolders";
-import GetFiles from "@/components/GetFiles";
+import GetFolders from "@/containers/DriveContent/GetFolders";
+import GetFiles from "@/containers/DriveContent/GetFiles";
 import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
-import { getFiles, getFolderById, getFolderPath } from "@/lib/api-client";
+import {
+  getFiles,
+  getFolderById,
+  getFolderPath,
+} from "@/services/drive-service";
 import { DotLoader } from "react-spinners";
-import { logCustom } from "@/lib/logger";
-import { useComponentTracking } from "@/lib/logger/hooks";
+import { logCustom } from "@/utils/logger";
+import { useComponentTracking } from "@/hooks/useComponentTracking";
 
 interface BreadcrumbItem {
   id: string;
@@ -19,12 +23,31 @@ interface BreadcrumbItem {
   path: string;
 }
 
+interface FileItem {
+  id: string;
+  name: string;
+  type?: string;
+  size?: number;
+  isTrashed?: boolean;
+}
+
+interface FolderItem {
+  id: string;
+  name: string;
+  isTrashed?: boolean;
+}
+
+interface PathFolder {
+  id: string;
+  name: string;
+}
+
 function Folder() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [files, setFiles] = useState<any[]>([]);
-  const [folders, setFolders] = useState<any[]>([]);
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [folders, setFolders] = useState<FolderItem[]>([]);
   const [currentFolderName, setCurrentFolderName] = useState("Nested Folder");
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
 
@@ -56,18 +79,10 @@ function Folder() {
     folders.length,
   ]);
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && user && folderId) {
-      loadFiles();
-      loadBreadcrumbs();
-    }
-  }, [isAuthenticated, user, authLoading, folderId]);
-
-  const loadBreadcrumbs = async () => {
+  const loadBreadcrumbs = useCallback(async () => {
     try {
       const pathData = await getFolderPath(folderId);
 
-      // Build breadcrumbs starting with Home
       const breadcrumbItems: BreadcrumbItem[] = [
         {
           id: "root",
@@ -76,8 +91,7 @@ function Folder() {
         },
       ];
 
-      // Add each folder in the path
-      pathData.path.forEach((folder: any) => {
+      pathData.path.forEach((folder: PathFolder) => {
         breadcrumbItems.push({
           id: folder.id,
           name: folder.name,
@@ -88,7 +102,6 @@ function Folder() {
       setBreadcrumbs(breadcrumbItems);
     } catch (error) {
       console.error("Error loading breadcrumbs:", error);
-      // Fallback breadcrumbs
       setBreadcrumbs([
         {
           id: "root",
@@ -102,9 +115,9 @@ function Folder() {
         },
       ]);
     }
-  };
+  }, [folderId, currentFolderName]);
 
-  const loadFiles = async () => {
+  const loadFiles = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -150,7 +163,21 @@ function Folder() {
         setIsLoading(false);
       }, 500);
     }
-  };
+  }, [folderId]);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user && folderId) {
+      loadFiles();
+      loadBreadcrumbs();
+    }
+  }, [
+    isAuthenticated,
+    user,
+    authLoading,
+    folderId,
+    loadFiles,
+    loadBreadcrumbs,
+  ]);
 
   if (authLoading) {
     return (

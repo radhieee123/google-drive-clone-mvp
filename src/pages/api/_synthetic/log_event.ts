@@ -2,15 +2,36 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 
-const sessionMetadata = new Map<
-  string,
-  {
-    startTime: string;
-    lastActivity: string;
-    eventCount: number;
-    eventTypes: Record<string, number>;
-  }
->();
+interface LogPayload {
+  text: string;
+  custom_action?: string;
+  page_url?: string;
+  element_identifier?: string;
+  endpoint?: string;
+  method?: string;
+  status?: number;
+  coordinates?: {
+    x: number;
+    y: number;
+  };
+  data?: Record<string, unknown>;
+}
+
+interface LogEvent {
+  session_id: string;
+  action_type: string;
+  timestamp: string;
+  payload: LogPayload;
+}
+
+interface SessionMetadata {
+  startTime: string;
+  lastActivity: string;
+  eventCount: number;
+  eventTypes: Record<string, number>;
+}
+
+const sessionMetadata = new Map<string, SessionMetadata>();
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,7 +42,7 @@ export default async function handler(
   }
 
   try {
-    const log = req.body;
+    const log = req.body as LogEvent;
 
     if (!log.session_id || !log.action_type || !log.payload) {
       return res.status(400).json({ error: "Invalid log format" });
@@ -82,7 +103,7 @@ export default async function handler(
   }
 }
 
-function formatReadableLog(log: any): string {
+function formatReadableLog(log: LogEvent): string {
   return `
 ${"=".repeat(80)}
 [${new Date(log.timestamp).toLocaleString()}] ${log.action_type}
@@ -112,7 +133,7 @@ ${"=".repeat(80)}
 `;
 }
 
-function generateSummary(sessionId: string, metadata: any): string {
+function generateSummary(sessionId: string, metadata: SessionMetadata): string {
   const duration =
     new Date(metadata.lastActivity).getTime() -
     new Date(metadata.startTime).getTime();
@@ -143,7 +164,7 @@ Generated: ${new Date().toLocaleString()}
 `;
 }
 
-function logToConsole(log: any): void {
+function logToConsole(log: LogEvent): void {
   const shortSession = log.session_id.substring(8, 20);
   console.log(` [${shortSession}] ${log.payload.text}`);
 }

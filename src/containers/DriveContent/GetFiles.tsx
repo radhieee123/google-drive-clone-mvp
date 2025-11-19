@@ -1,0 +1,158 @@
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import FileIcons from "@/components/FileIcons";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { useAuth } from "@/hooks/useAuth";
+import FileDropDown from "../../components/FileDropDown";
+import { getFiles } from "@/services/drive-service";
+import Rename from "../../components/Rename";
+import { logClick } from "@/utils/logger";
+import { DriveFile } from "@/types/drive";
+
+interface GetFilesProps {
+  folderId: string;
+  select: string;
+}
+
+function GetFiles({ folderId, select }: GetFilesProps) {
+  const [openMenu, setOpenMenu] = useState("");
+  const [renameToggle, setRenameToggle] = useState("");
+  const [fileList, setFileList] = useState<DriveFile[]>([]);
+
+  const { user } = useAuth();
+
+  const loadFiles = useCallback(async () => {
+    try {
+      const starred = select === "starred";
+      const trashed = select === "trashed";
+
+      const data = await getFiles(folderId || undefined, starred, trashed);
+      setFileList(data.files || []);
+    } catch (error) {
+      console.error("Error loading files:", error);
+      setFileList([]);
+    }
+  }, [folderId, select]);
+
+  useEffect(() => {
+    if (user) {
+      loadFiles();
+    }
+  }, [loadFiles, user]);
+
+  const openFile = (fileLink: string, fileName: string, fileId: string) => {
+    logClick(`Open file: ${fileName}`, `file-open-${fileId}`);
+    window.open(fileLink, "_blank");
+  };
+
+  const handleMenuToggle = (
+    fileId: string,
+    fileName: string,
+    e: React.MouseEvent,
+  ) => {
+    logClick(
+      `Toggle menu for file: ${fileName}`,
+      `file-menu-toggle-${fileId}`,
+      { x: e.clientX, y: e.clientY },
+    );
+    setRenameToggle("");
+    setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
+  };
+
+  const list = fileList.map((file) => {
+    const icon =
+      FileIcons[file.fileExtension as keyof typeof FileIcons] ??
+      FileIcons["any"];
+
+    const img = ["jpg", "ico", "webp", "png", "jpeg", "gif", "jfif"].includes(
+      file.fileExtension,
+    ) ? (
+      <Image
+        src={file.fileLink}
+        alt={file.fileName}
+        height="500"
+        width="500"
+        draggable={false}
+        className="h-full w-full rounded-sm object-cover object-center"
+      />
+    ) : file.fileExtension === "mp3" ? (
+      <div className="flex flex-col items-center justify-center">
+        <div className="h-24 w-24 ">{icon}</div>
+        <audio controls className="w-44">
+          <source src={file.fileLink} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+    ) : file.fileExtension === "mp4" ? (
+      <video controls>
+        <source src={file.fileLink} type="audio/mpeg" />
+        <div className="h-36 w-36 ">{icon}</div>
+      </video>
+    ) : (
+      <div className="h-36 w-36 ">{icon}</div>
+    );
+
+    let condition = !file?.isTrashed;
+    if (select === "starred") condition = file?.isStarred && !file?.isTrashed;
+    else if (select === "trashed") condition = file?.isTrashed;
+
+    return (
+      condition && (
+        <div
+          key={file.id}
+          onDoubleClick={() => openFile(file.fileLink, file.fileName, file.id)}
+          className="hover:cursor-alias"
+        >
+          <div
+            className="flex w-full cursor-pointer flex-col items-center justify-center
+         overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
+          >
+            <div className="relative flex w-full items-center justify-between px-1 py-3">
+              <div className="flex items-center space-x-4">
+                <div className="h-6 w-6">{icon}</div>
+                <span className="w-32 truncate text-sm font-medium text-textC">
+                  {file.fileName}
+                </span>
+              </div>
+              <BsThreeDotsVertical
+                onClick={(e) => handleMenuToggle(file.id, file.fileName, e)}
+                className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
+              />
+              {openMenu === file.id && (
+                <FileDropDown
+                  file={{
+                    ...file,
+                    folderName: "",
+                    isFolder: false,
+                    folderId: folderId || "",
+                  }}
+                  setOpenMenu={setOpenMenu}
+                  isFolderComp={false}
+                  select={select}
+                  folderId=""
+                  setRenameToggle={setRenameToggle}
+                />
+              )}
+              {renameToggle === file.id && (
+                <Rename
+                  setRenameToggle={setRenameToggle}
+                  fileId={file.id}
+                  isFolder={false}
+                  fileName={file.fileName}
+                  fileExtension={file.fileExtension}
+                />
+              )}
+            </div>
+            <div className="flex h-44 w-48 items-center justify-center pb-2.5">
+              {img}
+            </div>
+          </div>
+        </div>
+      )
+    );
+  });
+
+  return <>{list}</>;
+}
+
+export default GetFiles;

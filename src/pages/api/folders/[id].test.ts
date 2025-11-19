@@ -35,9 +35,6 @@ describe("/api/folders/[id] API Handler", () => {
     jest.clearAllMocks();
   });
 
-  // ============================================
-  // AUTHENTICATION TESTS
-  // ============================================
   describe("Authentication", () => {
     it("should return 401 when x-user-id header is missing", async () => {
       req.method = "GET";
@@ -70,9 +67,6 @@ describe("/api/folders/[id] API Handler", () => {
     });
   });
 
-  // ============================================
-  // METHOD VALIDATION TESTS
-  // ============================================
   describe("Method Validation", () => {
     it("should return 405 for POST method", async () => {
       req.method = "POST";
@@ -102,9 +96,6 @@ describe("/api/folders/[id] API Handler", () => {
     });
   });
 
-  // ============================================
-  // GET METHOD TESTS
-  // ============================================
   describe("GET /api/folders/[id]", () => {
     beforeEach(() => {
       req.method = "GET";
@@ -264,9 +255,6 @@ describe("/api/folders/[id] API Handler", () => {
     });
   });
 
-  // ============================================
-  // PATCH METHOD TESTS
-  // ============================================
   describe("PATCH /api/folders/[id]", () => {
     beforeEach(() => {
       req.method = "PATCH";
@@ -487,9 +475,6 @@ describe("/api/folders/[id] API Handler", () => {
     });
   });
 
-  // ============================================
-  // DELETE METHOD TESTS
-  // ============================================
   describe("DELETE /api/folders/[id]", () => {
     beforeEach(() => {
       req.method = "DELETE";
@@ -592,9 +577,6 @@ describe("/api/folders/[id] API Handler", () => {
     });
   });
 
-  // ============================================
-  // EDGE CASES
-  // ============================================
   describe("Edge Cases", () => {
     it("should handle special characters in folder ID", async () => {
       req.method = "GET";
