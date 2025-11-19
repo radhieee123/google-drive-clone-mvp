@@ -63,6 +63,25 @@ export default async function handler(
     metadata.eventTypes[log.action_type] =
       (metadata.eventTypes[log.action_type] || 0) + 1;
 
+    const isVercel = process.env.VERCEL === "1";
+
+    if (isVercel) {
+      logToConsole(log);
+
+      console.log("EVENT_DATA:", JSON.stringify(log));
+
+      if (metadata.eventCount % 10 === 0) {
+        const summary = generateSummary(log.session_id, metadata);
+        console.log("SESSION_SUMMARY:", summary);
+      }
+
+      return res.status(200).json({
+        success: true,
+        environment: "vercel",
+        message: "Log recorded to console",
+      });
+    }
+
     const logsBaseDir = path.join(process.cwd(), "logs");
     const today = new Date().toISOString().split("T")[0] as string;
     const dateDir = path.join(logsBaseDir, today);
@@ -91,6 +110,7 @@ export default async function handler(
 
     return res.status(200).json({
       success: true,
+      environment: "local",
       files: {
         jsonl: jsonlPath,
         readable: readablePath,
