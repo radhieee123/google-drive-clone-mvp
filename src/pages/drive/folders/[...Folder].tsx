@@ -71,7 +71,6 @@ function Folder() {
     try {
       const pathData = await getFolderPath(folderId);
 
-      // Build breadcrumbs starting with Home
       const breadcrumbItems: BreadcrumbItem[] = [
         {
           id: "root",
@@ -80,7 +79,6 @@ function Folder() {
         },
       ];
 
-      // Add each folder in the path
       pathData.path.forEach((folder: any) => {
         breadcrumbItems.push({
           id: folder.id,
@@ -92,7 +90,6 @@ function Folder() {
       setBreadcrumbs(breadcrumbItems);
     } catch (error) {
       console.error("Error loading breadcrumbs:", error);
-      // Fallback breadcrumbs
       setBreadcrumbs([
         {
           id: "root",

@@ -21,12 +21,7 @@ function GetFolders({ folderId, select }: GetFoldersProps) {
   const { user } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (user) {
-      loadFolders();
-    }
-  }, [folderId, select, user]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadFolders = async () => {
     try {
       const starred = select === "starred";
@@ -39,6 +34,12 @@ function GetFolders({ folderId, select }: GetFoldersProps) {
       setFolderList([]);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      loadFolders();
+    }
+  }, [folderId, loadFolders, select, user]);
 
   const handleMenuToggle = (
     folderId: string,
