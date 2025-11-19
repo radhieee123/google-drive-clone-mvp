@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import FileIcons from "@/components/FileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -20,13 +20,7 @@ function GetFiles({ folderId, select }: GetFilesProps) {
 
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      loadFiles();
-    }
-  }, [folderId, select, user]);
-
-  const loadFiles = async () => {
+  const loadFiles = useCallback(async () => {
     try {
       const starred = select === "starred";
       const trashed = select === "trashed";
@@ -37,7 +31,13 @@ function GetFiles({ folderId, select }: GetFilesProps) {
       console.error("Error loading files:", error);
       setFileList([]);
     }
-  };
+  }, [folderId, select]);
+
+  useEffect(() => {
+    if (user) {
+      loadFiles();
+    }
+  }, [loadFiles, user]);
 
   const openFile = (fileLink: string, fileName: string, fileId: string) => {
     logClick(`Open file: ${fileName}`, `file-open-${fileId}`);

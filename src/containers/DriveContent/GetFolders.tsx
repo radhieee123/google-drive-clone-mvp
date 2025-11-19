@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
@@ -21,8 +21,7 @@ function GetFolders({ folderId, select }: GetFoldersProps) {
   const { user } = useAuth();
   const router = useRouter();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadFolders = async () => {
+  const loadFolders = useCallback(async () => {
     try {
       const starred = select === "starred";
       const trashed = select === "trashed";
@@ -33,13 +32,13 @@ function GetFolders({ folderId, select }: GetFoldersProps) {
       console.error("Error loading folders:", error);
       setFolderList([]);
     }
-  };
+  }, [folderId, select]);
 
   useEffect(() => {
     if (user) {
       loadFolders();
     }
-  }, [folderId, loadFolders, select, user]);
+  }, [loadFolders, user]);
 
   const handleMenuToggle = (
     folderId: string,
