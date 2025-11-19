@@ -19,19 +19,10 @@ import {
 import { useRouter } from "next/router";
 import { logClick } from "@/utils/logger";
 import { FILE_MENU_LABELS } from "../constants";
+import { FileDropDownItem } from "@/types/drive";
 
 interface FileDropDownProps {
-  file: {
-    folderName: string;
-    isFolder: boolean;
-    isStarred: boolean;
-    isTrashed: boolean;
-    id: string;
-    fileLink: string;
-    fileName: string;
-    fileExtension: string;
-    folderId: string;
-  };
+  file: FileDropDownItem;
   folderId: string;
   isFolderComp: boolean;
   select: string;

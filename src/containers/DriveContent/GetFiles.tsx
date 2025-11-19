@@ -7,6 +7,7 @@ import FileDropDown from "../../components/FileDropDown";
 import { getFiles } from "@/services/drive-service";
 import Rename from "../../components/Rename";
 import { logClick } from "@/utils/logger";
+import { DriveFile } from "@/types/drive";
 
 interface GetFilesProps {
   folderId: string;
@@ -16,7 +17,7 @@ interface GetFilesProps {
 function GetFiles({ folderId, select }: GetFilesProps) {
   const [openMenu, setOpenMenu] = useState("");
   const [renameToggle, setRenameToggle] = useState("");
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [fileList, setFileList] = useState<DriveFile[]>([]);
 
   const { user } = useAuth();
 
@@ -119,7 +120,12 @@ function GetFiles({ folderId, select }: GetFilesProps) {
               />
               {openMenu === file.id && (
                 <FileDropDown
-                  file={file}
+                  file={{
+                    ...file,
+                    folderName: "",
+                    isFolder: false,
+                    folderId: folderId || "",
+                  }}
                   setOpenMenu={setOpenMenu}
                   isFolderComp={false}
                   select={select}
