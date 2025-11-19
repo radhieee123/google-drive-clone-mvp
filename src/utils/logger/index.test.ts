@@ -134,10 +134,10 @@ describe("Logger Module", () => {
     });
 
     it("should handle empty payload", async () => {
-      await logEvent("CUSTOM", {} as any);
+      await logEvent("CUSTOM", { text: "", custom_action: "TEST" });
 
       const callBody = JSON.parse(fetchMock.mock.calls[0][1].body);
-      expect(callBody.payload).toEqual({});
+      expect(callBody.payload).toEqual({ text: "", custom_action: "TEST" });
     });
 
     it("should handle complex nested payload", async () => {

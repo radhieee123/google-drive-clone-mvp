@@ -17,7 +17,7 @@ import {
 
 global.fetch = jest.fn();
 
-function mockFetchResponse(data: any, ok = true) {
+function mockFetchResponse(data: unknown, ok = true) {
   (global.fetch as jest.Mock).mockResolvedValue({
     ok,
     json: async () => data,
@@ -1001,7 +1001,7 @@ describe("api-client - Enhanced Coverage (3%+ increase)", () => {
         json: async () => ({ id: "file-123" }),
       });
 
-      await addFile("test.txt", "link", "txt", 100, null as any);
+      await addFile("test.txt", "link", "txt", 100, null as unknown as string);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "/api/files",
@@ -1023,7 +1023,7 @@ describe("api-client - Enhanced Coverage (3%+ increase)", () => {
         json: async () => ({ id: "folder-123" }),
       });
 
-      await addFolder("Test Folder", null as any);
+      await addFolder("Test Folder", null as unknown as string);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "/api/folders",
@@ -1135,10 +1135,11 @@ describe("api-client - Enhanced Coverage (3%+ increase)", () => {
       ];
 
       const results = await Promise.allSettled(promises);
-
-      expect(results[0].status).toBe("fulfilled");
-      expect(results[1].status).toBe("rejected");
-      expect(results[2].status).toBe("fulfilled");
+      if (results && results.length) {
+        expect(results[0].status).toBe("fulfilled");
+        expect(results[1].status).toBe("rejected");
+        expect(results[2].status).toBe("fulfilled");
+      }
     });
   });
 

@@ -116,7 +116,7 @@ export function logStorage(
 export function logCustom(
   text: string,
   customAction: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
 ): void {
   logEvent("CUSTOM", {
     text,

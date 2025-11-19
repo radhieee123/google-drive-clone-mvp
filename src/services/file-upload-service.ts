@@ -1,8 +1,10 @@
 import { addFile } from "./drive-service";
 
+type ProgressUpdate = Array<Record<string, number>>;
+
 export const uploadFile = async (
   file: File,
-  setProgress: (progress: any) => void,
+  setProgress: (progress: (prev: ProgressUpdate) => ProgressUpdate) => void,
   folderId?: string,
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -21,7 +23,10 @@ export const uploadFile = async (
     xhr.upload.addEventListener("progress", (e) => {
       if (e.lengthComputable) {
         const progress = Math.round((e.loaded / e.total) * 100);
-        setProgress((prev: any[]) => [...prev, { [file.name]: progress }]);
+        setProgress((prev: ProgressUpdate) => [
+          ...prev,
+          { [file.name]: progress },
+        ]);
       }
     });
 
@@ -59,7 +64,7 @@ export const uploadFile = async (
 
 export const uploadFiles = async (
   files: FileList,
-  setProgress: (progress: any) => void,
+  setProgress: (progress: (prev: ProgressUpdate) => ProgressUpdate) => void,
   folderId?: string,
 ): Promise<void> => {
   const uploadPromises = Array.from(files).map((file) =>

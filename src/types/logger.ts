@@ -47,7 +47,7 @@ export interface SetStoragePayload {
 export interface CustomPayload {
   text: string;
   custom_action: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 export type LogPayload =

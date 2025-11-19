@@ -20,9 +20,11 @@ interface Folder {
   folderName: string;
 }
 
+type ProgressUpdate = Array<Record<string, number>>;
+
 function DriveMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
-  const [progress, setProgress] = useState([]);
+  const [progress, setProgress] = useState<ProgressUpdate>([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [folderName, setFolderName] = useState<string>("");
   const [folderToggle, setFolderToggle] = useState(false);
@@ -167,7 +169,12 @@ function DriveMenu() {
   };
 
   const displayFileNames = [...fileName].reverse();
-  const displayProgress = [...progress].reverse();
+  const displayProgress = displayFileNames.map((name) => {
+    const progressEntry = [...progress]
+      .reverse()
+      .find((entry) => entry[name] !== undefined);
+    return progressEntry?.[name] ?? 0;
+  });
 
   const storageUsed = 4.5;
   const storageTotal = 15;
