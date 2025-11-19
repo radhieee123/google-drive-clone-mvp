@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import Image from "next/image";
 import { logClick, logKeyPress, logCustom } from "@/lib/logger";
 
@@ -9,7 +9,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login } = useMockAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

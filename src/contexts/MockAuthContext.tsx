@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { trackedLocalStorage } from "@/lib/logger/storage";
 import { logCustom } from "@/lib/logger";
 
-interface User {
+interface MockUser {
   id: string;
   email: string;
   name: string;
@@ -10,7 +10,7 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: MockUser | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -19,14 +19,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const MockAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<MockUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("mockUser");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const userData = await response.json();
       setUser(userData.user);
-      localStorage.setItem("user", JSON.stringify(userData.user));
+      localStorage.setItem("mockUser", JSON.stringify(userData.user));
       trackedLocalStorage.setItem("key", "value");
 
       logCustom(`User logged in: ${email}`, "USER_LOGIN", {
@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("mockUser");
   };
 
   return (
@@ -74,10 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useAuth = () => {
+export const useMockAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within AuthProvider");
+    throw new Error("useMockAuth must be used within MockAuthProvider");
   }
   return context;
 };

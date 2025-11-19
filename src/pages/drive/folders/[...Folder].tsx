@@ -6,7 +6,7 @@ import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import Login from "@/components/Login";
 import { getFiles, getFolderById, getFolderPath } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
@@ -30,7 +30,7 @@ function Folder() {
 
   const router = useRouter();
   const { Folder } = router.query;
-  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
 
   const folderId = Folder?.[0] || "";
 

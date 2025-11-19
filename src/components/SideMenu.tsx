@@ -14,7 +14,7 @@ import AddFolder from "./addBtnComponents/AddFolder";
 import { uploadFile } from "../lib/fileUpload";
 import ProgressIndicator from "./ProgressIndicator";
 import { addFolder } from "@/lib/api-client";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import { useRouter } from "next/router";
 
 interface NavItem {
@@ -38,7 +38,7 @@ function SideMenu() {
 
   const router = useRouter();
   const { Folder } = router.query;
-  const { user } = useAuth();
+  const { user } = useMockAuth();
 
   useEffect(() => {
     const fetchFolders = async () => {

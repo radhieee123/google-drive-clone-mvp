@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuthContext";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
 import fileIcons from "../fileIcons";
@@ -12,7 +12,7 @@ function Search() {
   const [allFolders, setAllFolders] = useState<any[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { user } = useAuth();
+  const { user } = useMockAuth();
   const router = useRouter();
 
   useEffect(() => {

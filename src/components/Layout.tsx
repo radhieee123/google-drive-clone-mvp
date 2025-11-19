@@ -1,14 +1,14 @@
 import React, { ReactNode } from "react";
 import Header from "./headerComponents/Header";
 import SideMenu from "./SideMenu";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 function Layout({ children }: LayoutProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useMockAuth();
 
   if (!isAuthenticated) {
     return <>{children}</>;

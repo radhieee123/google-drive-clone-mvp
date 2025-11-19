@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useMockAuth } from "@/contexts/MockAuthContext";
 import Login from "@/components/Login";
 
 export default function Index() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useMockAuth();
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
