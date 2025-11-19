@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/server/db";
+import { Prisma } from "@prisma/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,7 +31,7 @@ async function handleGet(
   try {
     const { folderId, starred, trashed } = req.query;
 
-    const whereClause: any = { userId };
+    const whereClause: Prisma.FileWhereInput = { userId };
 
     if (folderId) {
       whereClause.folderId = folderId as string;

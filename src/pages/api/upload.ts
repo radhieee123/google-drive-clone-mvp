@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable from "formidable";
+import formidable, { Fields, Files } from "formidable";
 import fs from "fs/promises";
 import path from "path";
 
@@ -36,14 +36,17 @@ export default async function handler(
         maxFileSize: 100 * 1024 * 1024,
       });
 
-      const [fields, files] = await new Promise<
-        [formidable.Fields, formidable.Files]
-      >((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve([fields, files]);
-        });
-      });
+      const [, files] = await new Promise<[Fields, Files]>(
+        (resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve([fields, files]);
+            }
+          });
+        },
+      );
 
       const uploadedFile = Array.isArray(files.file)
         ? files.file[0]
@@ -87,14 +90,17 @@ export default async function handler(
         maxFileSize: 100 * 1024 * 1024,
       });
 
-      const [fields, files] = await new Promise<
-        [formidable.Fields, formidable.Files]
-      >((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve([fields, files]);
-        });
-      });
+      const [, files] = await new Promise<[Fields, Files]>(
+        (resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve([fields, files]);
+            }
+          });
+        },
+      );
 
       const uploadedFile = Array.isArray(files.file)
         ? files.file[0]

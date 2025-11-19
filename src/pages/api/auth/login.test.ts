@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import handler from "./login";
 import { db } from "../../../server/db";
 
@@ -10,15 +11,15 @@ jest.mock("../../../server/db", () => ({
 }));
 
 const mockRequestResponse = () => {
-  const req: any = {
+  const req = {
     method: "",
     body: {},
-  };
+  } as unknown as NextApiRequest;
 
-  const res: any = {
+  const res = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
-  };
+  } as unknown as NextApiResponse;
 
   return { req, res };
 };
