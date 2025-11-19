@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
 
 export default function Index() {

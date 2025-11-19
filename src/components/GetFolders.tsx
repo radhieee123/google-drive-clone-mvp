@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { getFiles } from "@/lib/api-client";
 import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";

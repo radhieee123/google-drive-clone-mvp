@@ -1,4 +1,4 @@
-import { AuthProvider } from "@/hooks/useAuthContext";
+import { AuthProvider } from "@/hooks/useAuth";
 import Layout from "../components/Layout";
 import GlobalAnalyticsTracker from "@/components/GlobalAnalyticsTracker";
 import type { AppProps } from "next/app";

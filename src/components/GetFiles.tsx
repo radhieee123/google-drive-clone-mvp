@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useAuth } from "../hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import FileDropDown from "./FileDropDown";
 import { getFiles } from "@/lib/api-client";
 import Rename from "./Rename";

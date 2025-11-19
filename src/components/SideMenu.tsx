@@ -14,7 +14,7 @@ import AddFolder from "./addBtnComponents/AddFolder";
 import { uploadFile } from "../lib/fileUpload";
 import ProgressIndicator from "./ProgressIndicator";
 import { addFolder } from "@/lib/api-client";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
 
 interface NavItem {

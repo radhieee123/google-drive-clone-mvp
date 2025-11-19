@@ -6,7 +6,7 @@ import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
 import { getFiles, getFolderById, getFolderPath } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";

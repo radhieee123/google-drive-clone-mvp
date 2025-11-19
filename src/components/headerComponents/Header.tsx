@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { TbGridDots } from "react-icons/tb";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import Search from "./Search";
 import UserInfo from "./UserInfo";
 

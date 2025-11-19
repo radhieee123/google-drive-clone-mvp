@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
 import fileIcons from "../fileIcons";

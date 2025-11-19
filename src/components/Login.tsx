@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import { logClick, logKeyPress, logCustom } from "@/lib/logger";
 

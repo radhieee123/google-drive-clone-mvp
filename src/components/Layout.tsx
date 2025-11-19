@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import Header from "./headerComponents/Header";
 import SideMenu from "./SideMenu";
-import { useAuth } from "@/hooks/useAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LayoutProps {
   children: ReactNode;
