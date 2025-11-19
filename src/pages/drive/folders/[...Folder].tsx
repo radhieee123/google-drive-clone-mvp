@@ -4,7 +4,7 @@ import GetFolders from "@/containers/DriveContent/GetFolders";
 import GetFiles from "@/containers/DriveContent/GetFiles";
 import Head from "next/head";
 import FileHeader from "@/components/FileHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
@@ -23,12 +23,31 @@ interface BreadcrumbItem {
   path: string;
 }
 
+interface FileItem {
+  id: string;
+  name: string;
+  type?: string;
+  size?: number;
+  isTrashed?: boolean;
+}
+
+interface FolderItem {
+  id: string;
+  name: string;
+  isTrashed?: boolean;
+}
+
+interface PathFolder {
+  id: string;
+  name: string;
+}
+
 function Folder() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [files, setFiles] = useState<any[]>([]);
-  const [folders, setFolders] = useState<any[]>([]);
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [folders, setFolders] = useState<FolderItem[]>([]);
   const [currentFolderName, setCurrentFolderName] = useState("Nested Folder");
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
 
@@ -60,14 +79,7 @@ function Folder() {
     folders.length,
   ]);
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && user && folderId) {
-      loadFiles();
-      loadBreadcrumbs();
-    }
-  }, [isAuthenticated, user, authLoading, folderId]);
-
-  const loadBreadcrumbs = async () => {
+  const loadBreadcrumbs = useCallback(async () => {
     try {
       const pathData = await getFolderPath(folderId);
 
@@ -79,7 +91,7 @@ function Folder() {
         },
       ];
 
-      pathData.path.forEach((folder: any) => {
+      pathData.path.forEach((folder: PathFolder) => {
         breadcrumbItems.push({
           id: folder.id,
           name: folder.name,
@@ -103,9 +115,9 @@ function Folder() {
         },
       ]);
     }
-  };
+  }, [folderId, currentFolderName]);
 
-  const loadFiles = async () => {
+  const loadFiles = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -151,7 +163,21 @@ function Folder() {
         setIsLoading(false);
       }, 500);
     }
-  };
+  }, [folderId]);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user && folderId) {
+      loadFiles();
+      loadBreadcrumbs();
+    }
+  }, [
+    isAuthenticated,
+    user,
+    authLoading,
+    folderId,
+    loadFiles,
+    loadBreadcrumbs,
+  ]);
 
   if (authLoading) {
     return (

@@ -2,19 +2,31 @@ import Head from "next/head";
 import GetFiles from "@/containers/DriveContent/GetFiles";
 import GetFolders from "@/containers/DriveContent/GetFolders";
 import FileHeader from "@/components/FileHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
 import { getFiles } from "@/services/drive-service";
 import { DotLoader } from "react-spinners";
 
+interface FileItem {
+  id: string;
+  name: string;
+  type?: string;
+  size?: number;
+  isTrashed?: boolean;
+}
+
+interface FolderItem {
+  id: string;
+  name: string;
+  isTrashed?: boolean;
+}
+
 export default function Home() {
   const [isFolder, setIsFolder] = useState(false);
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [files, setFiles] = useState<any[]>([]);
-  const [folders, setFolders] = useState<any[]>([]);
 
   const { isAuthenticated, user, isLoading: authLoading } = useAuth();
 
@@ -26,24 +38,17 @@ export default function Home() {
     },
   ];
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && user) {
-      loadFiles();
-    }
-  }, [isAuthenticated, user, authLoading]);
-
-  const loadFiles = async () => {
+  const loadFiles = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await getFiles();
 
-      setFiles(data.files || []);
-      setFolders(data.folders || []);
-
       const hasFolders = (data.folders || []).some(
-        (item: any) => !item.isTrashed,
+        (item: FolderItem) => !item.isTrashed,
       );
-      const hasFiles = (data.files || []).some((item: any) => !item.isTrashed);
+      const hasFiles = (data.files || []).some(
+        (item: FileItem) => !item.isTrashed,
+      );
 
       setIsFolder(hasFolders);
       setIsFile(hasFiles);
@@ -54,7 +59,13 @@ export default function Home() {
         setIsLoading(false);
       }, 500);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user) {
+      loadFiles();
+    }
+  }, [isAuthenticated, user, authLoading, loadFiles]);
 
   if (authLoading) {
     return (
