@@ -3,10 +3,10 @@ import { HiOutlinePlus } from "react-icons/hi";
 import { PiSignOutBold } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 import Image from "next/image";
-import { useMockAuth } from "@/contexts/MockAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
-  const { user, logout } = useMockAuth();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
     logout();

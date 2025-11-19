@@ -4,7 +4,7 @@ import GetFolders from "@/components/GetFolders";
 import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useMockAuth } from "@/contexts/MockAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import Login from "@/components/Login";
 import { getFiles } from "@/lib/api-client";
 import { DotLoader } from "react-spinners";
@@ -14,7 +14,7 @@ export default function Trash() {
   const [isFile, setIsFile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { isAuthenticated, user, isLoading: authLoading } = useMockAuth();
+  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {

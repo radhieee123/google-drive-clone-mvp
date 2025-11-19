@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useMockAuth } from "@/contexts/MockAuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import FileDropDown from "./FileDropDown";
 import { getFiles } from "@/lib/api-client";
 import Rename from "./Rename";
@@ -18,7 +18,7 @@ function GetFiles({ folderId, select }: GetFilesProps) {
   const [renameToggle, setRenameToggle] = useState("");
   const [fileList, setFileList] = useState<any[]>([]);
 
-  const { user } = useMockAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (user) {
